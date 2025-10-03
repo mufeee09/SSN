@@ -5,7 +5,7 @@ export default function ContactSection() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    subject: '', // Added Subject field for clarity
+    subject: '',
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -23,6 +23,17 @@ export default function ContactSection() {
       setFormData({ name: '', email: '', subject: '', message: '' });
     }, 3500); // Slightly longer visible success state
   };
+
+  // --- Address & Link Constants ---
+  const MASJID_ADDRESS = 'Jamia Masjid, Pallivasal Street, SolasakkaraNallur, Uluthakuppai, Tamil Nadu 609118';
+  // Use encodeURIComponent to ensure the address is safe for a URL query
+  const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MASJID_ADDRESS)}`;
+
+  const MASJID_EMAIL = 'info@masjidname.org';
+  const MASJID_PHONE = '+91 98765 43210';
+  // Format phone number for tel: link (no spaces or dashes)
+  const PHONE_HREF = '+919876543210';
+
 
   return (
     <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
@@ -43,7 +54,7 @@ export default function ContactSection() {
               Masjid Information
             </h3>
 
-            {/* Address */}
+            {/* Address (Now a Maps Link) */}
             <div className="flex items-start">
               <div className="flex-shrink-0 mr-4">
                 <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
@@ -52,15 +63,20 @@ export default function ContactSection() {
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 mb-1 text-lg">Location</h4>
-                <p className="text-gray-700">
-                  786 Al-Masjid Street<br />
-                  Faith & Unity District<br />
-                  City, State 90210
-                </p>
+                {/* FIX: Wrapped address in <a> tag with Maps URL */}
+                <a
+                  href={MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-700 hover:text-blue-600 transition-colors underline-offset-4 hover:underline block"
+                  aria-label={`View ${MASJID_ADDRESS} on Google Maps (opens in new tab)`}
+                >
+                  {MASJID_ADDRESS}
+                </a>
               </div>
             </div>
 
-            {/* Email */}
+            {/* Email (Now a mailto Link) */}
             <div className="flex items-start">
               <div className="flex-shrink-0 mr-4">
                 <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center shadow-lg">
@@ -69,11 +85,18 @@ export default function ContactSection() {
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 mb-1 text-lg">General Inquiry</h4>
-                <p className="text-gray-700">info@masjidname.org</p>
+                {/* FIX: Wrapped email in <a> tag with mailto: protocol */}
+                <a
+                  href={`mailto:${MASJID_EMAIL}`}
+                  className="text-gray-700 hover:text-blue-600 transition-colors underline-offset-4 hover:underline"
+                  aria-label={`Send an email to ${MASJID_EMAIL}`}
+                >
+                  {MASJID_EMAIL}
+                </a>
               </div>
             </div>
 
-            {/* Phone */}
+            {/* Phone (Now a tel Link) */}
             <div className="flex items-start">
               <div className="flex-shrink-0 mr-4">
                 <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center shadow-lg">
@@ -81,24 +104,19 @@ export default function ContactSection() {
                 </div>
               </div>
               <div>
-                <h4 className="font-bold text-gray-900 mb-1 text-lg">Emergency / Imam's Office</h4>
-                <p className="text-gray-700">+91 98765 43210</p>
+                <h4 className="font-bold text-gray-900 mb-1 text-lg">Phone</h4>
+                {/* FIX: Wrapped phone number in <a> tag with tel: protocol */}
+                <a
+                  href={`tel:${PHONE_HREF}`}
+                  className="text-gray-700 hover:text-blue-600 transition-colors underline-offset-4 hover:underline"
+                  aria-label={`Call the Masjid at ${MASJID_PHONE}`}
+                >
+                  {MASJID_PHONE}
+                </a>
               </div>
             </div>
-
-            {/* Hours */}
-            <div className="flex items-start border-t pt-6">
-              <div className="flex-shrink-0 mr-4">
-                <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
-                  <Clock size={22} className="text-white" />
-                </div>
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-900 mb-1 text-lg">Open for Worship</h4>
-                <p className="text-green-700 font-semibold">24 Hours / 7 Days a Week</p>
-                <p className="text-gray-600 text-sm mt-1">Visit during Salat times for congregation.</p>
-              </div>
-            </div>
+            
+            {/* Hours section commented out in original code, leaving it out */}
           </div>
           
           {/* --- Contact Form (Right Column) --- */}

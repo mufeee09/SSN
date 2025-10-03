@@ -57,10 +57,10 @@ export default function Footer() {
         </div>
         
         {/* --- 3. Copyright and Credits --- */}
-        <p className="text-gray-500 text-sm mt-2">
+        <p className="text-gray-250 text-sm mt-2">
           &copy; {new Date().getFullYear()} Jamiah Masjid. All rights reserved.
         </p>
-        <p className="text-gray-600 text-xs mt-1">
+        <p className="text-gray-250 text-xs mt-1">
           Developed with <Heart size={10} className="inline mx-1 text-red-500" /> for the Community.
         </p>
       </div>
