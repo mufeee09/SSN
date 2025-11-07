@@ -224,12 +224,12 @@ export default function Footer() {
         <div className="text-center space-y-3 relative">
           <div className="h-px w-24 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent mx-auto mb-6"></div>
           
-          <p className="text-gray-300 text-sm font-medium tracking-wide">
+          <p className="text-gray-300 text-s font-medium tracking-wide">
             &copy; {new Date().getFullYear()} <span className="text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text font-bold">Jamiah Masjid</span>. All rights reserved.
           </p>
           
-          <p className="text-gray-400 text-xs leading-relaxed flex items-center justify-center gap-2">
-            Developed with <Heart size={14} className="text-red-500 animate-pulse" /> for the Community
+          <p className="text-gray-400 text-sm leading-relaxed flex items-center justify-center gap-2">
+            Developed with <Heart size={18} className="text-red-500 animate-pulse" /> for the Community
           </p>
         </div>
       </div>
