@@ -102,25 +102,25 @@ export default function Hero() {
         </p>
 
         {/* CTA Button */}
-        <button
+        {/* <button
           onClick={() => {
             const element = document.getElementById('menu');
             if (element) element.scrollIntoView({ behavior: 'smooth' });
           }}
           className="group relative px-6 sm:px-8 md:px-10 py-3 sm:py-4 font-semibold text-sm sm:text-base md:text-lg overflow-hidden rounded-lg transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/50"
-        >
+        > */}
           {/* Button background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 transition-transform duration-300 group-hover:scale-105"></div>
+          {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 transition-transform duration-300 group-hover:scale-105"></div> */}
           
           {/* Button shine effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 translate-x-full group-hover:translate-x-0 transition-all duration-500"></div>
+          {/* <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 translate-x-full group-hover:translate-x-0 transition-all duration-500"></div> */}
           
           {/* Button text */}
-          <span className="relative text-white flex items-center justify-center gap-2">
+          {/* <span className="relative text-white flex items-center justify-center gap-2">
             Explore Now
             <ChevronDown size={18} className="group-hover:translate-y-1 transition-transform duration-300" />
-          </span>
-        </button>
+          </span> */}
+        {/* </button> */}
 
         {/* Scroll indicator
         <div className="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
