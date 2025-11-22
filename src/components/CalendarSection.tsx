@@ -1404,7 +1404,7 @@ const allMonthlyEventsRaw = {
   ],
   'August': [
     { date: 'Aug 1 - 5', fajr: '4:40', zuhr: '12:40', asr_: '4:50', magrib: '6:42', isha_: '8:05', sahar_mudivu: '4:22', udhayam: '6:00', astam: '6:37', uchcham: '12:18' },
-    { date: 'Aug 6 - 11', fajr: '4:45', zuhr: '12:40', asr_: '4:45', magrib: '6:40', isha_: '8:05', sahar_mudivu: '4:23', udhayam: '6:00', astam: '6:35', uchcham: '12:17' },
+    { date: 'Aug 6 - 11', fajr: '4:45', zuhr: '12:40', asr_: '4:45', magrib: '6:40', isha_: '8:05', sahar_mudivu: '4:23', udhayam: '6:00', astam: '6:35', uchcham: '12:18' },
     { date: 'Aug 12 - 17', fajr: '4:45', zuhr: '12:40', asr_: '4:45', magrib: '6:38', isha_: '8:00', sahar_mudivu: '4:25', udhayam: '6:01', astam: '6:33', uchcham: '12:17' },
     { date: 'Aug 18 - 23', fajr: '4:45', zuhr: '12:40', asr_: '4:40', magrib: '6:36', isha_: '7:55', sahar_mudivu: '4:26', udhayam: '6:01', astam: '6:31', uchcham: '12:16' },
     { date: 'Aug 24 - End', fajr: '4:45', zuhr: '12:40', asr_: '4:35', magrib: '6:32', isha_: '7:50', sahar_mudivu: '4:27', udhayam: '6:01', astam: '6:27', uchcham: '12:15' },
@@ -1428,7 +1428,7 @@ const allMonthlyEventsRaw = {
     { date: 'Nov 6 - 11', fajr: '4:50', zuhr: '12:40', asr_: '4:10', magrib: '5:56', isha_: '7:15', sahar_mudivu: '4:31', udhayam: '6:04', astam: '5:48', uchcham: '11:56' },
     { date: 'Nov 12 - 17', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:33', udhayam: '6:06', astam: '5:47', uchcham: '11:56' },
     { date: 'Nov 18 - 23', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:35', udhayam: '6:08', astam: '5:47', uchcham: '11:57' },
-    { date: 'Nov 24 - End', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:20', sahar_mudivu: '4:36', udhayam: '6:10', astam: '5:47', uchcham: '11:59' },
+    { date: 'Nov 24 - End', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:36', udhayam: '6:10', astam: '5:47', uchcham: '11:59' },
   ],
   'December': [
     { date: 'Dec 1 - 5', fajr: '5:00', zuhr: '12:40', asr_: '4:15', magrib: '5:56', isha_: '7:20', sahar_mudivu: '4:39', udhayam: '6:14', astam: '5:48', uchcham: '12:01' },
@@ -1661,6 +1661,8 @@ export default function CalendarSection() {
   const now = new Date();
   const currentMonthName = now.toLocaleDateString('en-US', { month: 'long' });
   const currentDay = now.getDate();
+const currentMonth = now.getMonth() + 1;
+const currentYear = now.getFullYear();
 
   const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
   const events = useMemo(() => allMonthlyEvents[selectedMonth] || [], [selectedMonth]);
@@ -1707,7 +1709,7 @@ export default function CalendarSection() {
               {monthNames.map((month) => (
                 <option key={month} value={month} className="bg-slate-900">
                   {month}
-                  {month === currentMonthName && ` (Current)`}
+                  {month === currentMonthName && ` (${currentDay}.${currentMonth}.${currentYear})`}
                 </option>
               ))}
             </select>
