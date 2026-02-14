@@ -2,18 +2,28 @@
 
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCfwPRrAEyT5_VJtzJDQu1vcC6AejsSy34",
-  authDomain: "ssn-web-aaa51.firebaseapp.com",
-  projectId: "ssn-web-aaa51",
-  storageBucket: "ssn-web-aaa51.firebasestorage.app",
-  messagingSenderId: "991072246164",
-  appId: "1:991072246164:web:41fe1593a2968ab9825781",
-  measurementId: "G-2QJNJW2SKG"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
 
+// 🔐 Enable Firebase App Check (reCAPTCHA v3)
+initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider(
+    import.meta.env.VITE_RECAPTCHA_SITE_KEY // 🔹 Your reCAPTCHA SITE key
+  ),
+  isTokenAutoRefreshEnabled: true, // Automatically refresh token
+});
+
 export const db = getFirestore(app);
+
