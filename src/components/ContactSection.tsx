@@ -46,10 +46,10 @@
 //         </p>
 
 //         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
+
 //           {/* --- Contact Details (Left Column) --- */}
 //           <div className="lg:col-span-1 space-y-8 p-8 bg-gray-50 rounded-xl shadow-inner shadow-gray-200">
-            
+
 //             <h3 className="text-2xl font-bold text-blue-600 mb-4 border-b pb-3 border-blue-100">
 //               Masjid Information
 //             </h3>
@@ -115,10 +115,10 @@
 //                 </a>
 //               </div>
 //             </div>
-            
+
 //             {/* Hours section commented out in original code, leaving it out */}
 //           </div>
-          
+
 //           {/* --- Contact Form (Right Column) --- */}
 //           <div className="lg:col-span-2">
 //             <form onSubmit={handleSubmit} className="bg-white p-8 sm:p-12 rounded-xl shadow-2xl border-t-4 border-blue-600">
@@ -254,7 +254,7 @@
 //         </div>
 
 //         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-          
+
 //           {/* --- Contact Details (Left Column) --- */}
 //           <div className="lg:col-span-1">
 //             <div className="space-y-6">
@@ -317,13 +317,13 @@
 //               </a>
 //             </div>
 //           </div>
-          
+
 //           {/* --- Contact Form (Right Column) --- */}
 //           <div className="lg:col-span-2">
 //             <div className="group relative">
 //               {/* Gradient border effect */}
 //               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur"></div>
-              
+
 //               {/* Form Card */}
 //               <div className="relative bg-gradient-to-br from-slate-800/60 to-slate-800/30 backdrop-blur-xl p-8 sm:p-12 rounded-2xl border border-slate-700/50 group-hover:border-blue-500/50 transition-all duration-300">
 //                 <h3 className="text-2xl sm:text-3xl font-bold text-white mb-8">
@@ -1003,60 +1003,75 @@ export default function ContactSection() {
     message: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const email = formData.email;
+    if (isSending) return; // Prevent double click
 
-    // --- Check restriction from localStorage ---
-    const stored = localStorage.getItem("emailRestriction");
-    const emailRestrictions = stored ? JSON.parse(stored) : {};
+    const { name, email, subject, message } = formData;
 
-    const now = new Date().getTime();
-
-    if (emailRestrictions[email] && now < emailRestrictions[email]) {
-      toast.error(
-        "You have already sent a message."
-      );
+    // 🔥 Manual Validation
+    if (!name || !email || !subject || !message) {
+      toast.error("Please fill out all fields before submitting.");
       return;
     }
 
-    // Replace with your EmailJS credentials
-    const serviceId = "service_24s79q8";
-    const templateId = "template_3hm6yqb";
-    const publicKey = "Q3GwIc419Yy5t5wGs";
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
 
-    emailjs
-      .send(serviceId, templateId, formData, publicKey)
-      .then(() => {
-        setIsSubmitted(true);
+    const stored = localStorage.getItem("emailRestriction");
+    const emailRestrictions = stored ? JSON.parse(stored) : {};
+    const now = new Date().getTime();
 
-        // Set restriction for 2 days
-        const expireTime = now + 2 * 24 * 60 * 60 * 1000; // 2 days in ms
-        localStorage.setItem(
-          "emailRestriction",
-          JSON.stringify({ ...emailRestrictions, [email]: expireTime })
-        );
+    if (emailRestrictions[email] && now < emailRestrictions[email]) {
+      toast.error("You have already sent a message.");
+      return;
+    }
 
-        toast.success("Message sent successfully!");
+    const serviceId = "service_umcbwtb";
+    const templateId = "template_m8cv23o";
+    const publicKey = "YeTcY95A0O-zoZFy6";
 
-        setTimeout(() => {
-          setIsSubmitted(false);
-          setFormData({ name: "", email: "", subject: "", message: "" });
-        }, 3500);
-      })
-      .catch((error) => {
-        console.error("EmailJS error:", error);
-        toast.error(
-          "Something went wrong while sending your message. Please try again."
-        );
-      });
+    try {
+      setIsSending(true); // Disable button immediately
+
+      await emailjs.send(serviceId, templateId, formData, publicKey);
+
+      setIsSubmitted(true);
+
+      const expireTime = now + 2 * 24 * 60 * 60 * 1000;
+      localStorage.setItem(
+        "emailRestriction",
+        JSON.stringify({ ...emailRestrictions, [email]: expireTime })
+      );
+
+      toast.success("Message sent successfully!");
+
+      setFormData({ name: "", email: "", subject: "", message: "" });
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 3000);
+
+    } catch (error) {
+      console.error("EmailJS error:", error);
+      toast.error("Something went wrong while sending your message.");
+    } finally {
+      setIsSending(false); // Re-enable button
+    }
   };
+
 
   const MASJID_ADDRESS =
     "Jamia Masjid, Pallivasal Street, SolasakkaraNallur, Uluthakuppai, Tamil Nadu 609118";
@@ -1202,7 +1217,6 @@ export default function ContactSection() {
                     <input
                       id="name"
                       type="text"
-                      required
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1216,7 +1230,6 @@ export default function ContactSection() {
                     <input
                       id="email"
                       type="email"
-                      required
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1233,7 +1246,6 @@ export default function ContactSection() {
                   <input
                     id="subject"
                     type="text"
-                    required
                     value={formData.subject}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-slate-900/50 border border-slate-600/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -1248,7 +1260,6 @@ export default function ContactSection() {
                   </label>
                   <textarea
                     id="message"
-                    required
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
@@ -1259,14 +1270,17 @@ export default function ContactSection() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitted}
-                  className={`w-full py-4 px-6 rounded-xl font-bold text-lg tracking-wider flex items-center justify-center transition-all duration-300 shadow-lg ${
-                    isSubmitted
-                      ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-emerald-500/50 cursor-not-allowed"
-                      : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-blue-500/50 hover:shadow-2xl transform hover:scale-[1.02]"
-                  }`}
+                  disabled={isSending}
+                  className={`w-full py-4 px-6 rounded-xl font-bold text-lg tracking-wider flex items-center justify-center transition-all duration-300 shadow-lg ${isSending
+                      ? "bg-gray-600 text-white cursor-not-allowed"
+                      : isSubmitted
+                        ? "bg-gradient-to-r from-emerald-500 to-emerald-600 text-white"
+                        : "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:shadow-blue-500/50 hover:shadow-2xl transform hover:scale-[1.02]"
+                    }`}
                 >
-                  {isSubmitted ? (
+                  {isSending ? (
+                    "Sending..."
+                  ) : isSubmitted ? (
                     <>
                       <span className="inline-block mr-2">✓</span> Message Sent!
                     </>
@@ -1276,6 +1290,7 @@ export default function ContactSection() {
                     </>
                   )}
                 </button>
+
               </form>
             </div>
           </div>
