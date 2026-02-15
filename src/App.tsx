@@ -470,6 +470,8 @@ import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import HadithTicker from './components/hadith';
+import { listenToForegroundMessages } from "./notifications";
+
 
 function LoadingScreen({ onComplete }) {
   const [fadeOut, setFadeOut] = useState(false);
@@ -617,6 +619,11 @@ function LoadingScreen({ onComplete }) {
 function App() {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+  listenToForegroundMessages();
+}, []);
+
 
   const handleLoadingComplete = () => {
     // 1. Start the content fade-in immediately

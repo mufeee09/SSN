@@ -81,7 +81,7 @@
 //     >
 //       {/* Gradient overlay with modern design */}
 //       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
-      
+
 //       {/* Animated accent elements */}
 //       <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl opacity-30 animate-pulse"></div>
 //       <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -111,10 +111,10 @@
 //         > */}
 //           {/* Button background gradient */}
 //           {/* <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 transition-transform duration-300 group-hover:scale-105"></div> */}
-          
+
 //           {/* Button shine effect */}
 //           {/* <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-20 translate-x-full group-hover:translate-x-0 transition-all duration-500"></div> */}
-          
+
 //           {/* Button text */}
 //           {/* <span className="relative text-white flex items-center justify-center gap-2">
 //             Explore Now
@@ -138,6 +138,8 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import img from "../images/solasakkaranallur_official-20251003-0001.jpg"
+import { requestNotificationPermission } from "../notifications";
+
 
 // FIX: Replaced the failing local import with a runnable placeholder URL.
 // The fix for mobile flicker (using a fixed div) is retained.
@@ -153,11 +155,11 @@ export default function Hero() {
       className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
       {/* FIX: Fixed Background Container (z-0) to prevent mobile flicker. */}
-      <div 
-        className="fixed inset-0 z-0" 
+      <div
+        className="fixed inset-0 z-0"
         style={{
           // Use the placeholder URL here
-          backgroundImage: `url(${img})`, 
+          backgroundImage: `url(${img})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
@@ -166,7 +168,7 @@ export default function Hero() {
 
       {/* Gradient overlay with modern design - Must be above the fixed image (z-10) */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10"></div>
-      
+
       {/* Animated accent elements - z-index higher than overlay (z-20) */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl opacity-30 animate-pulse z-20"></div>
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl opacity-30 animate-pulse z-20" style={{ animationDelay: '1s' }}></div>
@@ -185,6 +187,14 @@ export default function Hero() {
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-8 sm:mb-12 max-w-3xl leading-relaxed">
           Discover all our Events and Programs
         </p>
+
+        <button
+          onClick={requestNotificationPermission}
+          className="group relative px-6 sm:px-8 py-3 sm:py-4 font-semibold text-sm sm:text-base overflow-hidden rounded-lg transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/40 bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+        >
+          🔔 Enable Prayer Reminders
+        </button>
+
 
         {/* CTA Button (kept commented out) */}
         {/* <button
