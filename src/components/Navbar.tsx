@@ -299,11 +299,187 @@
 //   );
 // }
 
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+
+
+// LATEST CODE
+
+// import { Menu, X } from 'lucide-react';
+// import { useState } from 'react';
+
+// export default function Navbar() {
+//   const [isOpen, setIsOpen] = useState(false);
+
+//   const scrollToSection = (id) => {
+//     const element = document.getElementById(id);
+//     if (element) {
+//       const offset = 80;
+//       const bodyRect = document.body.getBoundingClientRect().top;
+//       const elementRect = element.getBoundingClientRect().top;
+//       const elementPosition = elementRect - bodyRect;
+//       const offsetPosition = elementPosition - offset;
+
+//       window.scrollTo({
+//         top: offsetPosition,
+//         behavior: 'smooth'
+//       });
+//       setIsOpen(false);
+//     }
+//   };
+
+//   const navItems = [
+//     { id: 'home', label: 'Home' },
+//     { id: 'programs', label: 'Programs' },
+//     { id: 'prayer-schedule', label: 'Prayer Times' },
+//     { id: 'about', label: 'Our Mission' },
+//     { id: 'contact', label: 'Contact' },
+//   ];
+
+//   return (
+//     <>
+//       <nav className="fixed top-0 left-0 right-0 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 backdrop-blur-md shadow-2xl z-50 border-b border-blue-500/10">
+//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+//           <div className="flex justify-between items-center h-20">
+//             <div className="flex-shrink-0">
+//               <h1
+//                 className="text-3xl font-extrabold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent tracking-wider cursor-pointer hover:from-blue-300 hover:to-blue-500 transition-all duration-300"
+//                 onClick={() => scrollToSection('home')}
+//                 role="link"
+//                 aria-label="Jamiah Masjid - Go to Home"
+//                 tabIndex={0}
+//                 onKeyDown={(e) => {
+//                   if (e.key === 'Enter' || e.key === ' ') {
+//                     scrollToSection('home');
+//                   }
+//                 }}
+//               >
+//                 Jamiah Masjid
+//               </h1>
+//             </div>
+
+//             {/* --- Desktop Navigation --- */}
+//             <div className="hidden md:flex items-center space-x-1">
+//               {navItems.map(item => (
+//                 <button
+//                   key={item.id}
+//                   onClick={() => scrollToSection(item.id)}
+//                   className="relative text-gray-300 hover:text-blue-300 px-4 py-2 text-sm font-semibold transition-all duration-200 uppercase tracking-wider group"
+//                 >
+//                   {item.label}
+//                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 group-hover:w-full transition-all duration-300"></span>
+//                 </button>
+//               ))}
+//             </div>
+
+//             {/* --- Mobile Menu Button --- */}
+//             <div className="md:hidden">
+//               <button
+//                 onClick={() => setIsOpen(!isOpen)}
+//                 className="text-blue-400 hover:text-blue-300 p-2 hover:bg-blue-500/10 rounded-lg transition-all duration-200"
+//                 aria-label={isOpen ? "Close menu" : "Open menu"}
+//                 aria-expanded={isOpen}
+//               >
+//                 {isOpen ? <X size={28} /> : <Menu size={28} />}
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </nav>
+
+//       {/* --- Mobile Menu Overlay --- */}
+//       <div
+//         className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden transition-opacity duration-700 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+//           }`}
+//         onClick={() => setIsOpen(false)}
+//       />
+
+//       {/* --- Mobile Menu Sidebar --- */}
+//       <div
+//         className={`fixed top-0 right-0 h-full w-80 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 shadow-2xl z-50 md:hidden transform transition-all duration-700 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+//           }`}
+//       >
+//         <div className="flex flex-col h-full">
+//           {/* Close Button */}
+//           <div className="flex justify-end p-6 border-b border-blue-500/10">
+//             <button
+//               onClick={() => setIsOpen(false)}
+//               className="text-blue-400 hover:text-blue-300 p-2 hover:bg-blue-500/10 rounded-lg transition-all duration-200"
+//               aria-label="Close menu"
+//             >
+//               <X size={28} />
+//             </button>
+//           </div>
+
+//           {/* Menu Items */}
+//           <div className="flex-1 px-6 py-8 space-y-2 overflow-y-auto">
+//             {navItems.map((item, index) => (
+//               <button
+//                 key={item.id}
+//                 onClick={() => scrollToSection(item.id)}
+//                 className={`block w-full text-left px-6 py-4 text-base font-semibold text-gray-300 hover:text-blue-300 hover:bg-blue-500/10 rounded-xl transition-all duration-500 ease-in-out uppercase tracking-wider border border-transparent hover:border-blue-500/20 transform ${isOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
+//                   }`}
+//                 style={{
+//                   transitionDelay: isOpen ? `${index * 100}ms` : `${(navItems.length - index) * 50}ms`,
+//                 }}
+//               >
+//                 <span className="flex items-center justify-between group">
+//                   {item.label}
+//                   <span className="inline-block w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 group-hover:w-8 transition-all duration-300"></span>
+//                 </span>
+//               </button>
+//             ))}
+//           </div>
+
+//           {/* Footer Decoration */}
+//           <div className="p-6 border-t border-blue-500/10">
+//             <div className="text-center text-sm text-gray-500">
+//               <div className="h-1 w-16 mx-auto bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mb-2"></div>
+//               Jamiah Masjid
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+
+import { Menu, X, Download } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
+  // ✅ PWA Install State
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+
+    if (choice.outcome === 'accepted') {
+      console.log('User installed the app');
+    }
+
+    setDeferredPrompt(null);
+    setIsInstallable(false);
+  };
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -364,6 +540,17 @@ export default function Navbar() {
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </button>
               ))}
+
+              {/* ✅ Install Button Desktop */}
+              {isInstallable && (
+                <button
+                  onClick={handleInstall}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ml-3"
+                >
+                  <Download size={16} />
+                  Install App
+                </button>
+              )}
             </div>
 
             {/* --- Mobile Menu Button --- */}
@@ -423,6 +610,16 @@ export default function Navbar() {
                 </span>
               </button>
             ))}
+
+            {/* ✅ Install Button Mobile */}
+            {isInstallable && (
+              <button
+                onClick={handleInstall}
+                className="block w-full mt-6 px-6 py-4 text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all duration-300 uppercase tracking-wider"
+              >
+                Install App
+              </button>
+            )}
           </div>
 
           {/* Footer Decoration */}
@@ -437,6 +634,9 @@ export default function Navbar() {
     </>
   );
 }
+
+
+
 
 
 
