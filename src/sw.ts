@@ -1,8 +1,14 @@
-/// <reference lib="webworker" />
-
+import { precacheAndRoute } from 'workbox-precaching';
+import { clientsClaim } from 'workbox-core';
 import { initializeApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 
+declare let self: ServiceWorkerGlobalScope;
+
+self.skipWaiting();
+clientsClaim();
+
+// 🔥 REQUIRED FOR injectManifest
 precacheAndRoute(self.__WB_MANIFEST);
 
 const firebaseConfig = {
@@ -16,6 +22,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
+// 🔥 Background notifications
 onBackgroundMessage(messaging, (payload) => {
   self.registration.showNotification(
     payload.notification?.title || "Notification",
