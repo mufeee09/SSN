@@ -10,11 +10,6 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
 
-      // 🔥 ADD THIS (Important for FCM)
-      strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'sw.ts',
-
       includeAssets: [
         'favicon.ico',
         'apple-touch-icon.png',
@@ -51,6 +46,7 @@ export default defineConfig({
       },
 
       workbox: {
+        // 🔥 This is important — caches all built static files
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp}'],
 
         cleanupOutdatedCaches: true,
@@ -58,6 +54,7 @@ export default defineConfig({
         skipWaiting: true,
 
         runtimeCaching: [
+          // 🔥 Firebase Firestore
           {
             urlPattern: /^https:\/\/firestore\.googleapis\.com\/.*/i,
             handler: 'NetworkFirst',
@@ -71,6 +68,7 @@ export default defineConfig({
             },
           },
 
+          // 🔥 Firebase Storage (if you use it later)
           {
             urlPattern: /^https:\/\/firebasestorage\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
@@ -83,6 +81,7 @@ export default defineConfig({
             },
           },
 
+          // 🔥 Images from /assets or public
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|webp)$/i,
             handler: 'CacheFirst',
@@ -96,8 +95,7 @@ export default defineConfig({
           },
         ],
       },
-    })
-
+    }),
   ],
 
   optimizeDeps: {

@@ -470,8 +470,6 @@ import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import HadithTicker from './components/hadith';
-import { requestForToken, onMessageListener } from './firebase';
-
 
 function LoadingScreen({ onComplete }) {
   const [fadeOut, setFadeOut] = useState(false);
@@ -619,31 +617,6 @@ function LoadingScreen({ onComplete }) {
 function App() {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
-
-  useEffect(() => {
-  // 🔥 Ask Notification Permission
-  Notification.requestPermission().then((permission) => {
-    if (permission === "granted") {
-      requestForToken();
-    } else {
-      console.log("Notification permission denied");
-    }
-  });
-
-  // 🔥 Foreground Notification Listener
-  onMessageListener().then((payload: any) => {
-    console.log("Foreground notification:", payload);
-
-    if (payload?.notification) {
-      new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: '/pwa-192.png',
-      });
-    }
-  });
-
-}, []);
-
 
   const handleLoadingComplete = () => {
     // 1. Start the content fade-in immediately
