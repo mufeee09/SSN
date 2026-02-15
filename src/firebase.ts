@@ -66,12 +66,9 @@ export const db = getFirestore(app);
 
 // 🔔 Messaging (Push Notifications)
 // Use async check because messaging not supported in all browsers
-let messaging: any = null;
 
-isSupported().then((yes) => {
-  if (yes) {
-    messaging = getMessaging(app);
-  }
-});
 
-export { messaging };
+export const messaging =
+  typeof window !== "undefined"
+    ? getMessaging(app)
+    : null;
