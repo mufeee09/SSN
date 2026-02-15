@@ -33,10 +33,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { 
-  initializeAppCheck, 
-  ReCaptchaV3Provider 
-} from "firebase/app-check";
+// import {   initializeAppCheck,   ReCaptchaV3Provider } from "firebase/app-check";
 import { 
   getMessaging, 
   isSupported 
@@ -57,12 +54,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // 🔐 App Check (reCAPTCHA v3 Protection)
-initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider(
-    import.meta.env.VITE_RECAPTCHA_SITE_KEY
-  ),
-  isTokenAutoRefreshEnabled: true,
-});
+// initializeAppCheck(app, {
+//   provider: new ReCaptchaV3Provider(
+//     import.meta.env.VITE_RECAPTCHA_SITE_KEY
+//   ),
+//   isTokenAutoRefreshEnabled: true,
+// });
 
 // 📦 Firestore
 export const db = getFirestore(app);
