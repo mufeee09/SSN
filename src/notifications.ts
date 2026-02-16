@@ -3,7 +3,7 @@
  * and handle foreground messages. Works for both website and PWA.
  */
 import { getToken, onMessage, type MessagePayload } from "firebase/messaging";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db, messaging } from "./firebase";
 
 const FCM_COLLECTION = "fcmTokens";
@@ -90,10 +90,11 @@ export async function getFCMToken(): Promise<string | null> {
  */
 export async function saveTokenToFirestore(token: string): Promise<void> {
   try {
-    await addDoc(collection(db, FCM_COLLECTION), {
+    await setDoc(doc(db, FCM_COLLECTION, token), {
       token,
       createdAt: serverTimestamp(),
-      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
+      userAgent:
+        typeof navigator !== "undefined" ? navigator.userAgent : "",
     });
   } catch (err) {
     console.warn("FCM: failed to save token to Firestore", err);
