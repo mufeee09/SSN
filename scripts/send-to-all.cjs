@@ -113,16 +113,22 @@ async function sendToAll() {
     console.log(`Sending to ${tokens.length} devices...`);
 
     const response = await admin.messaging().sendEachForMulticast({
-      tokens,
-      notification: {
-        title,
-        body,
-      },
-      data: {
-        title,
-        body,
-      },
-    });
+  tokens,
+  notification: {
+    title,
+    body,
+  },
+  data: {
+    title,
+    body,
+  },
+  webpush: {
+    fcmOptions: {
+      link: "/", // opens your app when clicked
+    },
+  },
+});
+
 
 
     console.log("Success:", response.successCount);
