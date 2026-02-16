@@ -621,35 +621,31 @@ function App() {
   const [showContent, setShowContent] = useState(false);
   const [, setNotificationChecked] = useState(false);
 
-  useEffect(() => {
-  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-    initFCM((payload) => {
-      const title = payload.notification?.title || payload.data?.title;
-      const body = payload.notification?.body || payload.data?.body;
-      const text =
-        title && body ? `${title}: ${body}` : body || title || "New notification";
-
-      // System notification
-      if (Notification.permission === "granted" && title) {
-        new Notification(title, {
-          body,
-          icon: "/pwa-192x192.png",
-        });
-      }
-
-      toast(text, { icon: "🔔", duration: 5000 });
-    });
-  }
-}, []);
-
 
   // Request notifications only on user click (browsers require a user gesture)
-const handleEnableNotifications = () => {
-  initFCM().then((token) => {
-    setNotificationChecked(true);
-    if (token) toast.success("Notifications enabled");
-  });
-};
+  const handleEnableNotifications = () => {
+    initFCM((payload) => {
+  const title = payload.notification?.title || payload.data?.title;
+  const body = payload.notification?.body || payload.data?.body;
+  const text =
+    title && body ? `${title}: ${body}` : body || title || "New notification";
+
+  // 🔔 Show system notification even when app is open
+  if (Notification.permission === "granted" && title) {
+    new Notification(title, {
+      body,
+      icon: "/pwa-192x192.png", // optional
+    });
+  }
+
+  // 🎯 Also show in-app toast
+  toast(text, { icon: "🔔", duration: 5000 });
+}).then((token) => {
+  setNotificationChecked(true);
+  if (token) toast.success("Notifications enabled");
+});
+
+  };
 
   const handleLoadingComplete = () => {
     // 1. Start the content fade-in immediately
