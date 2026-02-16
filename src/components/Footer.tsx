@@ -256,7 +256,7 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-black text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <style jsx global>{`
+      <style>{`
         .font-arabic {
             font-family: 'Amiri', 'Traditional Arabic', serif;
             font-weight: 700;

@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "send-notification": "node scripts/send-to-all.cjs",
+    "subscribe-topic": "node scripts/subscribe-topic.cjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -21,6 +23,7 @@
     "react-hot-toast": "^2.6.0"
   },
   "devDependencies": {
+    "firebase-admin": "^13.0.0",
     "@eslint/js": "^9.9.1",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",

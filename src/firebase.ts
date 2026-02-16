@@ -30,10 +30,11 @@
 // src/firebase.ts
 
 import { initializeApp } from "firebase/app";
-import { 
-  getFirestore, 
-  enableIndexedDbPersistence 
+import {
+  getFirestore,
+  enableIndexedDbPersistence,
 } from "firebase/firestore";
+import { getMessaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -62,4 +63,8 @@ enableIndexedDbPersistence(db)
     }
   });
 
-export { db };
+// Firebase Cloud Messaging (browser only; background handled by firebase-messaging-sw.js)
+const messaging =
+  typeof window !== "undefined" ? getMessaging(app) : (null as ReturnType<typeof getMessaging> | null);
+
+export { db, messaging };

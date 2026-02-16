@@ -1,9 +1,74 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import fs from 'fs'
+import path from 'path'
 
-export default defineConfig({
+function firebaseMessagingSWPlugin() {
+  return {
+    name: 'firebase-messaging-sw',
+    config(_, { mode }) {
+      const env = loadEnv(mode, process.cwd(), '')
+      const config = {
+        apiKey: env.VITE_FIREBASE_API_KEY || 'YOUR_VITE_FIREBASE_API_KEY',
+        authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || 'YOUR_VITE_FIREBASE_AUTH_DOMAIN',
+        projectId: env.VITE_FIREBASE_PROJECT_ID || 'YOUR_VITE_FIREBASE_PROJECT_ID',
+        storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || 'YOUR_VITE_FIREBASE_STORAGE_BUCKET',
+        messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || 'YOUR_VITE_FIREBASE_MESSAGING_SENDER_ID',
+        appId: env.VITE_FIREBASE_APP_ID || 'YOUR_VITE_FIREBASE_APP_ID',
+        measurementId: env.VITE_FIREBASE_MEASUREMENT_ID || 'YOUR_VITE_FIREBASE_MEASUREMENT_ID',
+      }
+      const swContent = `/**
+ * Firebase Cloud Messaging - Background handler (injected at build)
+ */
+importScripts('https://www.gstatic.com/firebasejs/12.9.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging-compat.js');
+
+const firebaseConfig = ${JSON.stringify(config, null, 2)};
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  const title = payload.notification?.title || payload.data?.title || 'Notification';
+  const options = {
+    body: payload.notification?.body || payload.data?.body || '',
+    icon: payload.notification?.icon || '/pwa-192.png',
+    badge: '/pwa-192.png',
+    tag: payload.data?.tag || 'fcm-default',
+    data: payload.data || {},
+    requireInteraction: false,
+  };
+  return self.registration.showNotification(title, options);
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const urlToOpen = event.notification.data?.url || '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      if (clientList.length > 0) {
+        clientList[0].navigate(urlToOpen);
+        clientList[0].focus();
+      } else if (clients.openWindow) {
+        clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});
+`
+      const publicDir = path.resolve(process.cwd(), 'public')
+      fs.writeFileSync(path.join(publicDir, 'firebase-messaging-sw.js'), swContent)
+      // Also write under /fcm/ so we can register with scope /fcm/ and avoid competing with PWA SW
+      const fcmDir = path.join(publicDir, 'fcm')
+      if (!fs.existsSync(fcmDir)) fs.mkdirSync(fcmDir, { recursive: true })
+      fs.writeFileSync(path.join(fcmDir, 'firebase-messaging-sw.js'), swContent)
+    },
+  }
+}
+
+export default defineConfig(({ mode }) => ({
   plugins: [
+    firebaseMessagingSWPlugin(),
     react(),
 
     VitePWA({
@@ -101,4 +166,4 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-})
+}))

@@ -391,7 +391,7 @@ export default function HadithTicker() {
       </div>
 
       {/* --- CSS Animation --- */}
-      <style jsx global>{`
+      <style>{`
         .ticker-content {
           animation: scroll-left ${scrollDuration}s linear infinite;
         }

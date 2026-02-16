@@ -462,6 +462,7 @@
 
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import MenuSection from './components/MenuSection';
@@ -470,6 +471,7 @@ import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import HadithTicker from './components/hadith';
+import { initFCM } from './notifications';
 
 function LoadingScreen({ onComplete }) {
   const [fadeOut, setFadeOut] = useState(false);
@@ -574,7 +576,7 @@ function LoadingScreen({ onComplete }) {
       </div>
 
       {/* CSS Styles for Animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in-up {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -617,6 +619,20 @@ function LoadingScreen({ onComplete }) {
 function App() {
   const [loading, setLoading] = useState(true);
   const [showContent, setShowContent] = useState(false);
+  const [, setNotificationChecked] = useState(false);
+
+  // Request notifications only on user click (browsers require a user gesture)
+  const handleEnableNotifications = () => {
+    initFCM((payload) => {
+      const title = payload.notification?.title || payload.data?.title;
+      const body = payload.notification?.body || payload.data?.body;
+      const text = title && body ? `${title}: ${body}` : body || title || 'New notification';
+      toast(text, { icon: '🔔', duration: 5000 });
+    }).then((token) => {
+      setNotificationChecked(true); // re-render so banner hides when permission changes
+      if (token) toast.success('Notifications enabled');
+    });
+  };
 
   const handleLoadingComplete = () => {
     // 1. Start the content fade-in immediately
@@ -645,6 +661,19 @@ function App() {
         <AboutSection />
         <ContactSection />
         <Footer />
+        {/* Notifications: only show prompt if permission not yet granted/denied */}
+        {showContent && typeof Notification !== 'undefined' && Notification.permission === 'default' && (
+          <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 flex items-center gap-3 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg border border-slate-600">
+            <span className="text-sm flex-1">Get updates — enable notifications</span>
+            <button
+              type="button"
+              onClick={handleEnableNotifications}
+              className="shrink-0 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-medium rounded transition-colors"
+            >
+              Allow
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
