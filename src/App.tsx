@@ -471,7 +471,7 @@ import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import HadithTicker from './components/hadith';
-import { initFCM } from './notifications';
+import { initFCM, onForegroundMessage } from './notifications';
 
 function LoadingScreen({ onComplete }) {
   const [fadeOut, setFadeOut] = useState(false);
@@ -623,35 +623,40 @@ function App() {
 
 
   useEffect(() => {
-  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-    initFCM((payload) => {
-      console.log("Foreground message:", payload);
+  if (typeof Notification === "undefined") return;
+  if (Notification.permission !== "granted") return;
 
-      const title = payload.notification?.title || payload.data?.title;
-      const body = payload.notification?.body || payload.data?.body;
+  const unsubscribe = onForegroundMessage((payload) => {
+    console.log("Foreground message:", payload);
 
-      const text =
-        title && body
-          ? `${title}: ${body}`
-          : body || title || "New notification";
+    const title = payload.notification?.title || payload.data?.title;
+    const body = payload.notification?.body || payload.data?.body;
 
-      // ✅ Only toast when app is open
-      toast(text, {
-        icon: "🔔",
-        duration: 5000,
-      });
+    const text =
+      title && body
+        ? `${title}: ${body}`
+        : body || title || "New notification";
+
+    toast(text, {
+      icon: "🔔",
+      duration: 5000,
     });
-  }
+  });
+
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
 }, []);
 
 
-  // Request notifications only on user click (browsers require a user gesture)
-  const handleEnableNotifications = () => {
+
+const handleEnableNotifications = () => {
   initFCM().then((token) => {
     setNotificationChecked(true);
     if (token) toast.success("Notifications enabled");
   });
 };
+
 
 
   const handleLoadingComplete = () => {
