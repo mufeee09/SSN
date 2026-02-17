@@ -866,25 +866,31 @@ function App() {
 
   // Attach foreground listener
   const unsubscribe = onForegroundMessage((payload) => {
-    const title = payload.notification?.title || payload.data?.title;
-    const body = payload.notification?.body || payload.data?.body;
+  const title = payload.notification?.title || payload.data?.title;
+  const body = payload.notification?.body || payload.data?.body;
 
-    toast.custom((t) => (
-      <div className="max-w-sm w-full bg-slate-900 border border-amber-500/30 shadow-2xl rounded-xl p-4">
-        <div className="flex items-start gap-3">
-          <div className="text-amber-400 text-lg">🔔</div>
-          <div>
-            <p className="text-sm font-semibold text-amber-200">
-              {title}
-            </p>
-            <p className="mt-1 text-sm text-slate-300">
-              {body}
-            </p>
-          </div>
+  // 🔊 Play custom sound
+  const audio = new Audio("/notification.mp3");
+  audio.volume = 0.8;
+  audio.play().catch(() => {});
+
+  toast.custom((t) => (
+    <div className="max-w-sm w-full bg-slate-900 border border-amber-500/30 shadow-2xl rounded-xl p-4">
+      <div className="flex items-start gap-3">
+        <div className="text-amber-400 text-lg">🔔</div>
+        <div>
+          <p className="text-sm font-semibold text-amber-200">
+            {title}
+          </p>
+          <p className="mt-1 text-sm text-slate-300">
+            {body}
+          </p>
         </div>
       </div>
-    ), { duration: 5000 });
-  });
+    </div>
+  ), { duration: 5000 });
+});
+
 
   return () => {
     if (unsubscribe) unsubscribe();
