@@ -857,34 +857,40 @@ function App() {
   const [, setNotificationChecked] = useState(false);
 
   useEffect(() => {
-    if (typeof Notification === "undefined") return;
-    if (Notification.permission !== "granted") return;
+  if (typeof Notification === "undefined") return;
 
-    const unsubscribe = onForegroundMessage((payload) => {
-      const title = payload.notification?.title || payload.data?.title;
-      const body = payload.notification?.body || payload.data?.body;
+  // If already granted, auto initialize token
+  if (Notification.permission === "granted") {
+    initFCM();
+  }
 
-      toast.custom((t) => (
-        <div className={`${t.visible ? "toast-enter" : "toast-leave"} max-w-sm w-full bg-slate-900 border border-amber-500/30 shadow-2xl rounded-xl p-4`}>
-          <div className="flex items-start gap-3">
-            <div className="text-amber-400 text-lg">🔔</div>
-            <div>
-              <p className="text-sm font-semibold text-amber-200 tracking-wide">
-                {title}
-              </p>
-              <p className="mt-1 text-sm text-slate-300 leading-relaxed">
-                {body}
-              </p>
-            </div>
+  // Attach foreground listener
+  const unsubscribe = onForegroundMessage((payload) => {
+    const title = payload.notification?.title || payload.data?.title;
+    const body = payload.notification?.body || payload.data?.body;
+
+    toast.custom((t) => (
+      <div className="max-w-sm w-full bg-slate-900 border border-amber-500/30 shadow-2xl rounded-xl p-4">
+        <div className="flex items-start gap-3">
+          <div className="text-amber-400 text-lg">🔔</div>
+          <div>
+            <p className="text-sm font-semibold text-amber-200">
+              {title}
+            </p>
+            <p className="mt-1 text-sm text-slate-300">
+              {body}
+            </p>
           </div>
         </div>
-      ), { duration: 5000 });
-    });
+      </div>
+    ), { duration: 5000 });
+  });
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, []);
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
+}, []);
+
 
   const handleEnableNotifications = () => {
     initFCM().then((token) => {
