@@ -234,6 +234,7 @@ export async function saveTokenToFirestore(token: string): Promise<void> {
       createdAt: serverTimestamp(),
       userAgent:
         typeof navigator !== "undefined" ? navigator.userAgent : "",
+         isActive: true,
     });
   } catch (err) {
     console.warn("FCM: failed to save token", err);

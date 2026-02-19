@@ -108,7 +108,9 @@ async function sendToAll() {
       return;
     }
 
-    const tokens = snapshot.docs.map(doc => doc.data().token);
+const tokens = snapshot.docs
+  .filter(doc => doc.data().isActive === true)
+  .map(doc => doc.data().token);
 
     console.log(`Sending to ${tokens.length} devices...`);
 

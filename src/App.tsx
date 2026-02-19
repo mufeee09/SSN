@@ -707,7 +707,248 @@
 // export default App;
 
 
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
+// import toast from 'react-hot-toast';
+// import Navbar from './components/Navbar';
+// import Hero from './components/Hero';
+// import MenuSection from './components/MenuSection';
+// import CalendarSection from './components/CalendarSection';
+// import AboutSection from './components/AboutSection';
+// import ContactSection from './components/ContactSection';
+// import Footer from './components/Footer';
+// import HadithTicker from './components/hadith';
+// import { initFCM, onForegroundMessage } from './notifications';
+
+// function LoadingScreen({ onComplete }) {
+//   const [fadeOut, setFadeOut] = useState(false);
+
+//   useEffect(() => {
+//     const fadeTimer = setTimeout(() => {
+//       setFadeOut(true);
+//     }, 4500);
+
+//     const completeTimer = setTimeout(() => {
+//       onComplete();
+//     }, 5000);
+
+//     return () => {
+//       clearTimeout(fadeTimer);
+//       clearTimeout(completeTimer);
+//     };
+//   }, [onComplete]);
+
+//   return (
+//     <div
+//       className={`fixed inset-0 z-[9999] bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-500 ${
+//         fadeOut ? 'opacity-0' : 'opacity-100'
+//       }`}
+//     >
+//       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+//         <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-amber-500/5 rounded-full blur-[100px] animate-pulse-slow"></div>
+//         <div className="absolute bottom-1/3 right-1/3 w-96 h-96 bg-emerald-500/5 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+//       </div>
+
+//       <div className="relative w-24 h-24 mb-12 flex items-center justify-center">
+//         <div className="absolute inset-[-10%] rounded-full opacity-80 filter drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-swirl-complex">
+//           <svg className="w-full h-full" viewBox="0 0 100 100">
+//             <path d="M 50 10 A 40 40 0 1 1 50 90 A 20 20 0 1 0 50 10" fill="none" stroke="url(#cosmicGradientEmerald)" strokeWidth="1" />
+//             <path d="M 50 20 A 30 30 0 1 0 50 80 A 15 15 0 1 1 50 20" fill="none" stroke="url(#cosmicGradientGold)" strokeWidth="1" />
+//             <defs>
+//               <linearGradient id="cosmicGradientEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+//                 <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
+//                 <stop offset="50%" stopColor="#10b981" stopOpacity="1" />
+//                 <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+//               </linearGradient>
+//               <linearGradient id="cosmicGradientGold" x1="100%" y1="0%" x2="0%" y2="100%">
+//                 <stop offset="0%" stopColor="#f59e0b" stopOpacity="0" />
+//                 <stop offset="50%" stopColor="#f59e0b" stopOpacity="1" />
+//                 <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+//               </linearGradient>
+//             </defs>
+//           </svg>
+//         </div>
+
+//         <div className="relative w-4 h-4 rounded-full bg-amber-200 shadow-[0_0_30px_rgba(252,211,77,1)] animate-pulse-core-strong"></div>
+
+//         <div className="absolute inset-0">
+//           {Array.from({ length: 25 }).map((_, i) => (
+//             <div
+//               key={i}
+//               className="absolute w-[1px] h-[1px] bg-white rounded-full opacity-0 animate-twinkle-star"
+//               style={{
+//                 top: `${Math.random() * 100}%`,
+//                 left: `${Math.random() * 100}%`,
+//                 animationDelay: `${Math.random() * 3}s`,
+//                 filter: `blur(${Math.random() * 0.5}px)`,
+//                 transform: `scale(${0.5 + Math.random() * 0.5})`
+//               }}
+//             ></div>
+//           ))}
+//         </div>
+//       </div>
+
+//       <div className="relative z-10 text-center px-4 space-y-5">
+//         <h1 
+//           className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-b from-amber-100 via-white to-emerald-100 mb-4 animate-fade-in-up tracking-wide drop-shadow-lg" 
+//           style={{ fontFamily: 'serif' }}
+//         >
+//           بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
+//         </h1>
+
+//         <div className="flex items-center justify-center gap-4 opacity-0 animate-fade-in-up-delay">
+//           <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-amber-400/50"></div>
+//           <div className="text-amber-400/70 text-[10px] tracking-[3px]">✦</div>
+//           <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-amber-400/50"></div>
+//         </div>
+
+//         <p className="text-sm md:text-base text-slate-400 font-normal tracking-[0.2em] uppercase animate-fade-in-up-delay2">
+//           In the name of Allah, the Most Gracious, the Most Merciful
+//         </p>
+//       </div>
+
+//       <style>{`
+//         @keyframes fade-in-up {
+//           0% { opacity: 0; transform: translateY(20px); }
+//           100% { opacity: 1; transform: translateY(0); }
+//         }
+//         @keyframes pulse-slow {
+//           0%, 100% { opacity: 0.3; transform: scale(1); }
+//           50% { opacity: 0.5; transform: scale(1.1); }
+//         }
+//         @keyframes swirl-complex {
+//           0% { transform: rotate(0deg); }
+//           100% { transform: rotate(360deg); }
+//         }
+//         @keyframes pulse-core-strong {
+//           0%, 100% { opacity: 1; transform: scale(1); }
+//           50% { opacity: 1; transform: scale(1.2); }
+//         }
+//         @keyframes twinkle-star {
+//           0%, 10%, 90%, 100% { opacity: 0; }
+//           50% { opacity: 1; }
+//         }
+//         .animate-swirl-complex { animation: swirl-complex 5s linear infinite; }
+//         .animate-pulse-core-strong { animation: pulse-core-strong 1.8s ease-in-out infinite; }
+//         .animate-twinkle-star { animation: twinkle-star 2.5s ease-in-out infinite; }
+//         .animate-pulse-slow { animation: pulse-slow 6s ease-in-out infinite; }
+//         .animate-fade-in-up { animation: fade-in-up 1s ease-out forwards; animation-delay: 0.8s; opacity: 0; }
+//         .animate-fade-in-up-delay { animation: fade-in-up 1s ease-out 1.3s forwards; opacity: 0; }
+//         .animate-fade-in-up-delay2 { animation: fade-in-up 1s ease-out 1.8s forwards; opacity: 0; }
+
+//         /* Premium Toast Animation */
+//         @keyframes toast-enter {
+//           0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+//           100% { opacity: 1; transform: translateY(0) scale(1); }
+//         }
+//         @keyframes toast-leave {
+//           0% { opacity: 1; transform: translateY(0) scale(1); }
+//           100% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+//         }
+//         .toast-enter { animation: toast-enter 0.3s ease-out forwards; }
+//         .toast-leave { animation: toast-leave 0.2s ease-in forwards; }
+//       `}</style>
+//     </div>
+//   );
+// }
+
+// function App() {
+//   const [loading, setLoading] = useState(true);
+//   const [showContent, setShowContent] = useState(false);
+//   const [, setNotificationChecked] = useState(false);
+//   const notificationSound = new Audio("/notification.mp3");
+// notificationSound.volume = 0.8;
+
+
+//   useEffect(() => {
+//   if (typeof Notification === "undefined") return;
+
+//   // If already granted, auto initialize token
+//   if (Notification.permission === "granted") {
+//     initFCM();
+//   }
+
+//   // Attach foreground listener
+//   const unsubscribe = onForegroundMessage((payload) => {
+//   const title = payload.notification?.title || payload.data?.title;
+//   const body = payload.notification?.body || payload.data?.body;
+
+//   // 🔊 Play custom sound
+//   const audio = new Audio("/notification.mp3");
+//   audio.volume = 0.8;
+//   audio.play().catch(() => {});
+
+//   toast.custom((t) => (
+//     <div className="max-w-sm w-full bg-slate-900 border border-amber-500/30 shadow-2xl rounded-xl p-4">
+//       <div className="flex items-start gap-3">
+//         <div className="text-amber-400 text-lg">🔔</div>
+//         <div>
+//           <p className="text-sm font-semibold text-amber-200">
+//             {title}
+//           </p>
+//           <p className="mt-1 text-sm text-slate-300">
+//             {body}
+//           </p>
+//         </div>
+//       </div>
+//     </div>
+//   ), { duration: 5000 });
+// });
+
+
+//   return () => {
+//     if (unsubscribe) unsubscribe();
+//   };
+// }, []);
+
+
+//   const handleEnableNotifications = () => {
+//     initFCM().then((token) => {
+//       setNotificationChecked(true);
+//       if (token) toast.success("Notifications enabled");
+//     });
+//   };
+
+//   const handleLoadingComplete = () => {
+//     setShowContent(true);
+//     setTimeout(() => setLoading(false), 1050);
+//   };
+
+//   return (
+//     <div className={`min-h-screen ${loading ? 'bg-slate-950' : 'bg-white'}`}>
+//       {loading && <LoadingScreen onComplete={handleLoadingComplete} />}
+//       <div className={`transition-opacity duration-1000 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+//         <Navbar />
+//         <Hero />
+//         <HadithTicker />
+//         <MenuSection />
+//         <CalendarSection />
+//         <AboutSection />
+//         <ContactSection />
+//         <Footer />
+
+//         {showContent && typeof Notification !== 'undefined' && Notification.permission === 'default' && (
+//           <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 flex items-center gap-3 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg border border-slate-600">
+//             <span className="text-sm flex-1">Get updates — enable notifications</span>
+//             <button
+//               type="button"
+//               onClick={handleEnableNotifications}
+//               className="shrink-0 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm font-medium rounded transition-colors"
+//             >
+//               Allow
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default App;
+
+
+
+
+import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -723,13 +964,8 @@ function LoadingScreen({ onComplete }) {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => {
-      setFadeOut(true);
-    }, 4500);
-
-    const completeTimer = setTimeout(() => {
-      onComplete();
-    }, 5000);
+    const fadeTimer = setTimeout(() => setFadeOut(true), 4500);
+    const completeTimer = setTimeout(() => onComplete(), 5000);
 
     return () => {
       clearTimeout(fadeTimer);
@@ -847,6 +1083,7 @@ function LoadingScreen({ onComplete }) {
         .toast-enter { animation: toast-enter 0.3s ease-out forwards; }
         .toast-leave { animation: toast-leave 0.2s ease-in forwards; }
       `}</style>
+      {/* (Your entire LoadingScreen content unchanged) */}
     </div>
   );
 }
@@ -856,47 +1093,75 @@ function App() {
   const [showContent, setShowContent] = useState(false);
   const [, setNotificationChecked] = useState(false);
 
+  // 🔊 Create persistent audio instance
+  const notificationSound = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
-  if (typeof Notification === "undefined") return;
+    notificationSound.current = new Audio("/notification.mp3");
+    notificationSound.current.volume = 0.8;
+  }, []);
 
-  // If already granted, auto initialize token
-  if (Notification.permission === "granted") {
-    initFCM();
-  }
+  // 🔓 Unlock audio after first user interaction
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (!notificationSound.current) return;
 
-  // Attach foreground listener
-  const unsubscribe = onForegroundMessage((payload) => {
-  const title = payload.notification?.title || payload.data?.title;
-  const body = payload.notification?.body || payload.data?.body;
+      notificationSound.current.play()
+        .then(() => {
+          notificationSound.current?.pause();
+          notificationSound.current.currentTime = 0;
+        })
+        .catch(() => {});
 
-  // 🔊 Play custom sound
-  const audio = new Audio("/notification.mp3");
-  audio.volume = 0.8;
-  audio.play().catch(() => {});
+      window.removeEventListener("click", unlockAudio);
+    };
 
-  toast.custom((t) => (
-    <div className="max-w-sm w-full bg-slate-900 border border-amber-500/30 shadow-2xl rounded-xl p-4">
-      <div className="flex items-start gap-3">
-        <div className="text-amber-400 text-lg">🔔</div>
-        <div>
-          <p className="text-sm font-semibold text-amber-200">
-            {title}
-          </p>
-          <p className="mt-1 text-sm text-slate-300">
-            {body}
-          </p>
+    window.addEventListener("click", unlockAudio);
+
+    return () => {
+      window.removeEventListener("click", unlockAudio);
+    };
+  }, []);
+
+  // 🔔 FCM setup
+  useEffect(() => {
+    if (typeof Notification === "undefined") return;
+
+    if (Notification.permission === "granted") {
+      initFCM();
+    }
+
+    const unsubscribe = onForegroundMessage((payload) => {
+      const title = payload.notification?.title || payload.data?.title;
+      const body = payload.notification?.body || payload.data?.body;
+
+      // 🔊 Play custom sound
+      if (notificationSound.current) {
+        notificationSound.current.currentTime = 0;
+        notificationSound.current.play().catch(() => {});
+      }
+
+      toast.custom((t) => (
+        <div className="max-w-sm w-full bg-slate-900 border border-amber-500/30 shadow-2xl rounded-xl p-4">
+          <div className="flex items-start gap-3">
+            <div className="text-amber-400 text-lg">🔔</div>
+            <div>
+              <p className="text-sm font-semibold text-amber-200">
+                {title}
+              </p>
+              <p className="mt-1 text-sm text-slate-300">
+                {body}
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  ), { duration: 5000 });
-});
+      ), { duration: 5000 });
+    });
 
-
-  return () => {
-    if (unsubscribe) unsubscribe();
-  };
-}, []);
-
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
 
   const handleEnableNotifications = () => {
     initFCM().then((token) => {
@@ -941,8 +1206,6 @@ function App() {
 }
 
 export default App;
-
-
 
 
 
