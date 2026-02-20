@@ -108,28 +108,30 @@ async function sendToAll() {
       return;
     }
 
-const tokens = snapshot.docs
-  .filter(doc => doc.data().isActive === true)
-  .map(doc => doc.data().token);
+    const tokens = snapshot.docs
+      .filter(doc => doc.data().isActive === true)
+      .map(doc => doc.data().token);
+
+    console.log(`Sending to ${tokens.length} active devices...`);
 
     console.log(`Sending to ${tokens.length} devices...`);
 
     const response = await admin.messaging().sendEachForMulticast({
-  tokens,
-  notification: {
-    title,
-    body,
-  },
-  data: {
-    title,
-    body,
-  },
-  webpush: {
-    fcmOptions: {
-      link: "/", // opens your app when clicked
-    },
-  },
-});
+      tokens,
+      notification: {
+        title,
+        body,
+      },
+      data: {
+        title,
+        body,
+      },
+      webpush: {
+        fcmOptions: {
+          link: "/", // opens your app when clicked
+        },
+      },
+    });
 
 
 

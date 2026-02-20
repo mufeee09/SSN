@@ -1303,140 +1303,140 @@ import { Calendar, Clock, Sun, Moon, Sunrise, Sunset, Zap, ChevronDown, BellRing
 // --- 1. CORE DATA AND TIME MANIPULATION FUNCTIONS ---
 
 const roundToNearestTenMinutes = (timeStr) => {
-  if (!timeStr) return null;
+    if (!timeStr) return null;
 
-  const match = timeStr.match(/(\d+):(\d+)/);
-  if (!match) return timeStr;
+    const match = timeStr.match(/(\d+):(\d+)/);
+    if (!match) return timeStr;
 
-  let h = parseInt(match[1]);
-  let m = parseInt(match[2]);
+    let h = parseInt(match[1]);
+    let m = parseInt(match[2]);
 
-  m = Math.round(m / 10) * 10;
+    m = Math.round(m / 10) * 10;
 
-  if (m === 60) {
-    m = 0;
-    h += 1;
-  }
+    if (m === 60) {
+        m = 0;
+        h += 1;
+    }
 
-  if (h === 13) {
-    h = 1;
-  }
+    if (h === 13) {
+        h = 1;
+    }
 
-  const formattedMinutes = String(m).padStart(2, '0');
-  return `${h}:${formattedMinutes}`;
+    const formattedMinutes = String(m).padStart(2, '0');
+    return `${h}:${formattedMinutes}`;
 };
 
 const timeToMinutes = (timeInput, prayerName) => {
-  if (!timeInput) return -1;
+    if (!timeInput) return -1;
 
-  const timeStr = typeof timeInput === 'object' && timeInput !== null ? timeInput.azan : timeInput;
+    const timeStr = typeof timeInput === 'object' && timeInput !== null ? timeInput.azan : timeInput;
 
-  const match = String(timeStr).match(/(\d+):(\d+)/);
-  if (!match) return -1;
+    const match = String(timeStr).match(/(\d+):(\d+)/);
+    if (!match) return -1;
 
-  let h = parseInt(match[1], 10);
-  const m = parseInt(match[2], 10);
+    let h = parseInt(match[1], 10);
+    const m = parseInt(match[2], 10);
 
-  if (prayerName.includes('Zuhr') || prayerName.includes('Midday')) {
-    if (h === 12) return 12 * 60 + m;
-  } else if (prayerName.includes('Asr') || prayerName.includes('Magrib') || prayerName.includes('Isha') || prayerName.includes('Sunset')) {
-    if (h < 12) {
-      h += 12;
-    }
-  } else if (prayerName.includes('Fajr') || prayerName.includes('Sahar') || prayerName.includes('Sunrise')) {
-    if (h === 12) h = 0;
-  }
+    if (prayerName.includes('Zuhr') || prayerName.includes('Midday')) {
+        if (h === 12) return 12 * 60 + m;
+    } else if (prayerName.includes('Asr') || prayerName.includes('Magrib') || prayerName.includes('Isha') || prayerName.includes('Sunset')) {
+        if (h < 12) {
+            h += 12;
+        }
+    } else if (prayerName.includes('Fajr') || prayerName.includes('Sahar') || prayerName.includes('Sunrise')) {
+        if (h === 12) h = 0;
+    }
 
-  return h * 60 + m;
+    return h * 60 + m;
 };
 
 // --- 2. DATA WITH MODIFIERS ---
 
 const allMonthlyEventsRaw = {
-  'January': [
-    { date: 'Jan 1 - 5', fajr: '5:15', zuhr: '12:40', asr_: '4:25', magrib: '6:10', isha_: '7:35', sahar_mudivu: '4:54', udhayam: '6:29', astam: '6:02', uchcham: '12:15' },
-    { date: 'Jan 6 - 11', fajr: '5:15', zuhr: '12:40', asr_: '4:30', magrib: '6:12', isha_: '7:35', sahar_mudivu: '4:56', udhayam: '6:31', astam: '6:04', uchcham: '12:18' },
-    { date: 'Jan 12 - 17', fajr: '5:20', zuhr: '12:40', asr_: '4:30', magrib: '6:15', isha_: '7:40', sahar_mudivu: '4:59', udhayam: '6:33', astam: '6:07', uchcham: '12:20' },
-    { date: 'Jan 18 - 23', fajr: '5:20', zuhr: '12:40', asr_: '4:35', magrib: '6:19', isha_: '7:40', sahar_mudivu: '5:00', udhayam: '6:34', astam: '6:11', uchcham: '12:22' },
-    { date: 'Jan 24 - End', fajr: '5:20', zuhr: '12:40', asr_: '4:35', magrib: '6:21', isha_: '7:45', sahar_mudivu: '5:02', udhayam: '6:35', astam: '6:13', uchcham: '12:24' },
-  ],
-  'February': [
-    { date: 'Feb 1 - 5', fajr: '5:25', zuhr: '12:40', asr_: '4:40', magrib: '6:25', isha_: '7:45', sahar_mudivu: '5:03', udhayam: '6:35', astam: '6:17', uchcham: '12:26' },
-    { date: 'Feb 6 - 11', fajr: '5:20', zuhr: '12:40', asr_: '4:40', magrib: '6:26', isha_: '7:45', sahar_mudivu: '5:02', udhayam: '6:34', astam: '6:18', uchcham: '12:26' },
-    { date: 'Feb 12 - 17', fajr: '5:20', zuhr: '12:40', asr_: '4:45', magrib: '6:27', isha_: '7:45', sahar_mudivu: '5:01', udhayam: '6:33', astam: '6:20', uchcham: '12:26' },
-    { date: 'Feb 18 - 23', fajr: '5:20', zuhr: '12:40', asr_: '4:45', magrib: '6:27', isha_: '7:45', sahar_mudivu: '4:59', udhayam: '6:31', astam: '6:21', uchcham: '12:26' },
-    { date: 'Feb 24 - End', fajr: '5:15', zuhr: '12:40', asr_: '4:45', magrib: '6:27', isha_: '7:45', sahar_mudivu: '4:56', udhayam: '6:29', astam: '6:22', uchcham: '12:26' },
-  ],
-  'March': [
-    { date: 'Mar 1 - 5', fajr: '5:15', zuhr: '12:40', asr_: '4:45', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:54', udhayam: '6:26', astam: '6:23', uchcham: '12:25' },
-    { date: 'Mar 6 - 11', fajr: '5:10', zuhr: '12:40', asr_: '4:45', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:51', udhayam: '6:24', astam: '6:23', uchcham: '12:24' },
-    { date: 'Mar 12 - 17', fajr: '5:10', zuhr: '12:40', asr_: '4:45', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:48', udhayam: '6:21', astam: '6:24', uchcham: '12:22' },
-    { date: 'Mar 18 - 23', fajr: '5:05', zuhr: '12:40', asr_: '4:40', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:45', udhayam: '6:17', astam: '6:24', uchcham: '12:20' },
-    { date: 'Mar 24 - End', fajr: '5:00', zuhr: '12:40', asr_: '4:40', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:41', udhayam: '6:14', astam: '6:24', uchcham: '12:19' },
-  ],
-  'April': [
-    { date: 'Apr 1 - 5', fajr: '4:55', zuhr: '12:40', asr_: '4:40', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:36', udhayam: '6:09', astam: '6:24', uchcham: '12:16' },
-    { date: 'Apr 6 - 11', fajr: '4:55', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:33', udhayam: '6:06', astam: '6:24', uchcham: '12:15' },
-    { date: 'Apr 12 - 17', fajr: '4:50', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:50', sahar_mudivu: '4:29', udhayam: '6:02', astam: '6:24', uchcham: '12:13' },
-    { date: 'Apr 18 - 23', fajr: '4:45', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:50', sahar_mudivu: '4:25', udhayam: '5:59', astam: '6:24', uchcham: '12:12' },
-    { date: 'Apr 24 - End', fajr: '4:40', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:50', sahar_mudivu: '4:21', udhayam: '5:56', astam: '6:24', uchcham: '12:10' },
-  ],
-  'May': [
-    { date: 'May 1 - 5', fajr: '4:35', zuhr: '12:40', asr_: '4:35', magrib: '6:30', isha_: '7:50', sahar_mudivu: '4:17', udhayam: '5:53', astam: '6:25', uchcham: '12:09' },
-    { date: 'May 6 - 11', fajr: '4:35', zuhr: '12:40', asr_: '4:35', magrib: '6:31', isha_: '7:55', sahar_mudivu: '4:15', udhayam: '5:52', astam: '6:26', uchcham: '12:09' },
-    { date: 'May 12 - 17', fajr: '4:30', zuhr: '12:40', asr_: '4:40', magrib: '6:32', isha_: '7:55', sahar_mudivu: '4:12', udhayam: '5:50', astam: '6:26', uchcham: '12:08' },
-    { date: 'May 18 - 23', fajr: '4:30', zuhr: '12:40', asr_: '4:40', magrib: '6:33', isha_: '7:55', sahar_mudivu: '4:10', udhayam: '5:49', astam: '6:28', uchcham: '12:08' },
-    { date: 'May 24 - End', fajr: '4:30', zuhr: '12:40', asr_: '4:40', magrib: '6:34', isha_: '8:00', sahar_mudivu: '4:08', udhayam: '5:48', astam: '6:30', uchcham: '12:09' },
-  ],
-  'June': [
-    { date: 'Jun 1 - 5', fajr: '4:25', zuhr: '12:40', asr_: '4:45', magrib: '6:37', isha_: '8:00', sahar_mudivu: '4:07', udhayam: '5:47', astam: '6:32', uchcham: '12:10' },
-    { date: 'Jun 6 - 11', fajr: '4:25', zuhr: '12:40', asr_: '4:45', magrib: '6:38', isha_: '8:05', sahar_mudivu: '4:07', udhayam: '5:48', astam: '6:33', uchcham: '12:10' },
-    { date: 'Jun 12 - 17', fajr: '4:25', zuhr: '12:40', asr_: '4:45', magrib: '6:40', isha_: '8:05', sahar_mudivu: '4:07', udhayam: '5:49', astam: '6:35', uchcham: '12:12' },
-    { date: 'Jun 18 - 23', fajr: '4:30', zuhr: '12:40', asr_: '4:45', magrib: '6:41', isha_: '8:10', sahar_mudivu: '4:08', udhayam: '5:50', astam: '6:36', uchcham: '12:13' },
-    { date: 'Jun 24 - End', fajr: '4:30', zuhr: '12:40', asr_: '4:50', magrib: '6:42', isha_: '8:10', sahar_mudivu: '4:09', udhayam: '5:50', astam: '6:37', uchcham: '12:14' },
-  ],
-  'July': [
-    { date: 'Jul 1 - 5', fajr: '4:30', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:11', udhayam: '5:53', astam: '6:39', uchcham: '12:16' },
-    { date: 'Jul 6 - 11', fajr: '4:35', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:13', udhayam: '5:54', astam: '6:39', uchcham: '12:17' },
-    { date: 'Jul 12 - 17', fajr: '4:35', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:15', udhayam: '5:55', astam: '6:39', uchcham: '12:17' },
-    { date: 'Jul 18 - 23', fajr: '4:35', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:17', udhayam: '5:57', astam: '6:39', uchcham: '12:18' },
-    { date: 'Jul 24 - End', fajr: '4:40', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:19', udhayam: '5:58', astam: '6:39', uchcham: '12:18' },
-  ],
-  'August': [
-    { date: 'Aug 1 - 5', fajr: '4:40', zuhr: '12:40', asr_: '4:50', magrib: '6:42', isha_: '8:05', sahar_mudivu: '4:22', udhayam: '6:00', astam: '6:37', uchcham: '12:18' },
-    { date: 'Aug 6 - 11', fajr: '4:45', zuhr: '12:40', asr_: '4:45', magrib: '6:40', isha_: '8:05', sahar_mudivu: '4:23', udhayam: '6:00', astam: '6:35', uchcham: '12:18' },
-    { date: 'Aug 12 - 17', fajr: '4:45', zuhr: '12:40', asr_: '4:45', magrib: '6:38', isha_: '8:00', sahar_mudivu: '4:25', udhayam: '6:01', astam: '6:33', uchcham: '12:17' },
-    { date: 'Aug 18 - 23', fajr: '4:45', zuhr: '12:40', asr_: '4:40', magrib: '6:36', isha_: '7:55', sahar_mudivu: '4:26', udhayam: '6:01', astam: '6:31', uchcham: '12:16' },
-    { date: 'Aug 24 - End', fajr: '4:45', zuhr: '12:40', asr_: '4:35', magrib: '6:32', isha_: '7:50', sahar_mudivu: '4:27', udhayam: '6:01', astam: '6:27', uchcham: '12:15' },
-  ],
-  'September': [
-    { date: 'Sep 1 - 5', fajr: '4:50', zuhr: '12:40', asr_: '4:35', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:23', uchcham: '12:12' },
-    { date: 'Sep 6 - 11', fajr: '4:50', zuhr: '12:40', asr_: '4:35', magrib: '6:25', isha_: '7:45', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:20', uchcham: '12:11' },
-    { date: 'Sep 12 - 17', fajr: '4:50', zuhr: '12:40', asr_: '4:30', magrib: '6:22', isha_: '7:40', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:17', uchcham: '12:09' },
-    { date: 'Sep 18 - 23', fajr: '4:50', zuhr: '12:40', asr_: '4:30', magrib: '6:17', isha_: '7:35', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:12', uchcham: '12:06' },
-    { date: 'Sep 24 - End', fajr: '4:50', zuhr: '12:40', asr_: '4:25', magrib: '6:13', isha_: '7:30', sahar_mudivu: '4:28', udhayam: '6:00', astam: '6:08', uchcham: '12:04' },
-  ],
-  'October': [
-    { date: 'Oct 1 - 5', fajr: '4:50', zuhr: '12:40', asr_: '4:25', magrib: '6:09', isha_: '7:25', sahar_mudivu: '4:28', udhayam: '6:00', astam: '6:04', uchcham: '12:02' },
-    { date: 'Oct 6 - 11', fajr: '4:50', zuhr: '12:40', asr_: '4:20', magrib: '6:06', isha_: '7:25', sahar_mudivu: '4:28', udhayam: '6:00', astam: '6:01', uchcham: '12:00' },
-    { date: 'Oct 12 - 17', fajr: '4:45', zuhr: '12:40', asr_: '4:20', magrib: '6:02', isha_: '7:20', sahar_mudivu: '4:27', udhayam: '6:00', astam: '5:57', uchcham: '11:59' },
-    { date: 'Oct 18 - 23', fajr: '4:45', zuhr: '12:40', asr_: '4:15', magrib: '6:00', isha_: '7:20', sahar_mudivu: '4:27', udhayam: '6:00', astam: '5:55', uchcham: '11:57' },
-    { date: 'Oct 24 - End', fajr: '4:50', zuhr: '12:40', asr_: '4:15', magrib: '5:58', isha_: '7:15', sahar_mudivu: '4:28', udhayam: '6:01', astam: '5:52', uchcham: '11:56' },
-  ],
-  'November': [
-    { date: 'Nov 1 - 5', fajr: '4:50', zuhr: '12:40', asr_: '4:15', magrib: '5:56', isha_: '7:15', sahar_mudivu: '4:30', udhayam: '6:03', astam: '5:49', uchcham: '11:56' },
-    { date: 'Nov 6 - 11', fajr: '4:50', zuhr: '12:40', asr_: '4:10', magrib: '5:56', isha_: '7:15', sahar_mudivu: '4:31', udhayam: '6:04', astam: '5:48', uchcham: '11:56' },
-    { date: 'Nov 12 - 17', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:33', udhayam: '6:06', astam: '5:47', uchcham: '11:56' },
-    { date: 'Nov 18 - 23', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:35', udhayam: '6:08', astam: '5:47', uchcham: '11:57' },
-    { date: 'Nov 24 - End', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:36', udhayam: '6:10', astam: '5:47', uchcham: '11:59' },
-  ],
-  'December': [
-    { date: 'Dec 1 - 5', fajr: '5:00', zuhr: '12:40', asr_: '4:15', magrib: '5:56', isha_: '7:20', sahar_mudivu: '4:39', udhayam: '6:14', astam: '5:48', uchcham: '12:01' },
-    { date: 'Dec 6 - 11', fajr: '5:00', zuhr: '12:40', asr_: '4:15', magrib: '5:58', isha_: '7:20', sahar_mudivu: '4:41', udhayam: '6:16', astam: '5:48', uchcham: '12:03' },
-    { date: 'Dec 12 - 17', fajr: '5:05', zuhr: '12:40', asr_: '4:15', magrib: '6:00', isha_: '7:25', sahar_mudivu: '4:44', udhayam: '6:19', astam: '5:52', uchcham: '12:06' },
-    { date: 'Dec 18 - 23', fajr: '5:05', zuhr: '12:40', asr_: '4:20', magrib: '6:02', isha_: '7:25', sahar_mudivu: '4:46', udhayam: '6:23', astam: '5:54', uchcham: '12:08' },
-    { date: 'Dec 24 - End', fajr: '5:10', zuhr: '12:40', asr_: '4:20', magrib: '6:05', isha_: '7:30', sahar_mudivu: '4:50', udhayam: '6:26', astam: '5:57', uchcham: '12:11' },
-  ],
+    'January': [
+        { date: 'Jan 1 - 5', fajr: '5:15', zuhr: '12:40', asr_: '4:25', magrib: '6:10', isha_: '7:35', sahar_mudivu: '4:54', udhayam: '6:29', astam: '6:02', uchcham: '12:15' },
+        { date: 'Jan 6 - 11', fajr: '5:15', zuhr: '12:40', asr_: '4:30', magrib: '6:12', isha_: '7:35', sahar_mudivu: '4:56', udhayam: '6:31', astam: '6:04', uchcham: '12:18' },
+        { date: 'Jan 12 - 17', fajr: '5:20', zuhr: '12:40', asr_: '4:30', magrib: '6:15', isha_: '7:40', sahar_mudivu: '4:59', udhayam: '6:33', astam: '6:07', uchcham: '12:20' },
+        { date: 'Jan 18 - 23', fajr: '5:20', zuhr: '12:40', asr_: '4:35', magrib: '6:19', isha_: '7:40', sahar_mudivu: '5:00', udhayam: '6:34', astam: '6:11', uchcham: '12:22' },
+        { date: 'Jan 24 - End', fajr: '5:20', zuhr: '12:40', asr_: '4:35', magrib: '6:21', isha_: '7:45', sahar_mudivu: '5:02', udhayam: '6:35', astam: '6:13', uchcham: '12:24' },
+    ],
+    'February': [
+        { date: 'Feb 1 - 5', fajr: '5:25', zuhr: '12:40', asr_: '4:40', magrib: '6:25', isha_: '7:45', sahar_mudivu: '5:03', udhayam: '6:35', astam: '6:17', uchcham: '12:26' },
+        { date: 'Feb 6 - 11', fajr: '5:20', zuhr: '12:40', asr_: '4:40', magrib: '6:26', isha_: '7:45', sahar_mudivu: '5:02', udhayam: '6:34', astam: '6:18', uchcham: '12:26' },
+        { date: 'Feb 12 - 17', fajr: '5:20', zuhr: '12:40', asr_: '4:45', magrib: '6:27', isha_: '7:45', sahar_mudivu: '5:01', udhayam: '6:33', astam: '6:20', uchcham: '12:26' },
+        { date: 'Feb 18 - 23', fajr: '5:20', zuhr: '12:40', asr_: '4:45', magrib: '6:27', isha_: '7:45', sahar_mudivu: '4:59', udhayam: '6:31', astam: '6:21', uchcham: '12:26' },
+        { date: 'Feb 24 - End', fajr: '5:15', zuhr: '12:40', asr_: '4:45', magrib: '6:27', isha_: '7:45', sahar_mudivu: '4:56', udhayam: '6:29', astam: '6:22', uchcham: '12:26' },
+    ],
+    'March': [
+        { date: 'Mar 1 - 5', fajr: '5:15', zuhr: '12:40', asr_: '4:45', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:54', udhayam: '6:26', astam: '6:23', uchcham: '12:25' },
+        { date: 'Mar 6 - 11', fajr: '5:10', zuhr: '12:40', asr_: '4:45', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:51', udhayam: '6:24', astam: '6:23', uchcham: '12:24' },
+        { date: 'Mar 12 - 17', fajr: '5:10', zuhr: '12:40', asr_: '4:45', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:48', udhayam: '6:21', astam: '6:24', uchcham: '12:22' },
+        { date: 'Mar 18 - 23', fajr: '5:05', zuhr: '12:40', asr_: '4:40', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:45', udhayam: '6:17', astam: '6:24', uchcham: '12:20' },
+        { date: 'Mar 24 - End', fajr: '5:00', zuhr: '12:40', asr_: '4:40', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:41', udhayam: '6:14', astam: '6:24', uchcham: '12:19' },
+    ],
+    'April': [
+        { date: 'Apr 1 - 5', fajr: '4:55', zuhr: '12:40', asr_: '4:40', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:36', udhayam: '6:09', astam: '6:24', uchcham: '12:16' },
+        { date: 'Apr 6 - 11', fajr: '4:55', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:45', sahar_mudivu: '4:33', udhayam: '6:06', astam: '6:24', uchcham: '12:15' },
+        { date: 'Apr 12 - 17', fajr: '4:50', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:50', sahar_mudivu: '4:29', udhayam: '6:02', astam: '6:24', uchcham: '12:13' },
+        { date: 'Apr 18 - 23', fajr: '4:45', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:50', sahar_mudivu: '4:25', udhayam: '5:59', astam: '6:24', uchcham: '12:12' },
+        { date: 'Apr 24 - End', fajr: '4:40', zuhr: '12:40', asr_: '4:35', magrib: '6:29', isha_: '7:50', sahar_mudivu: '4:21', udhayam: '5:56', astam: '6:24', uchcham: '12:10' },
+    ],
+    'May': [
+        { date: 'May 1 - 5', fajr: '4:35', zuhr: '12:40', asr_: '4:35', magrib: '6:30', isha_: '7:50', sahar_mudivu: '4:17', udhayam: '5:53', astam: '6:25', uchcham: '12:09' },
+        { date: 'May 6 - 11', fajr: '4:35', zuhr: '12:40', asr_: '4:35', magrib: '6:31', isha_: '7:55', sahar_mudivu: '4:15', udhayam: '5:52', astam: '6:26', uchcham: '12:09' },
+        { date: 'May 12 - 17', fajr: '4:30', zuhr: '12:40', asr_: '4:40', magrib: '6:32', isha_: '7:55', sahar_mudivu: '4:12', udhayam: '5:50', astam: '6:26', uchcham: '12:08' },
+        { date: 'May 18 - 23', fajr: '4:30', zuhr: '12:40', asr_: '4:40', magrib: '6:33', isha_: '7:55', sahar_mudivu: '4:10', udhayam: '5:49', astam: '6:28', uchcham: '12:08' },
+        { date: 'May 24 - End', fajr: '4:30', zuhr: '12:40', asr_: '4:40', magrib: '6:34', isha_: '8:00', sahar_mudivu: '4:08', udhayam: '5:48', astam: '6:30', uchcham: '12:09' },
+    ],
+    'June': [
+        { date: 'Jun 1 - 5', fajr: '4:25', zuhr: '12:40', asr_: '4:45', magrib: '6:37', isha_: '8:00', sahar_mudivu: '4:07', udhayam: '5:47', astam: '6:32', uchcham: '12:10' },
+        { date: 'Jun 6 - 11', fajr: '4:25', zuhr: '12:40', asr_: '4:45', magrib: '6:38', isha_: '8:05', sahar_mudivu: '4:07', udhayam: '5:48', astam: '6:33', uchcham: '12:10' },
+        { date: 'Jun 12 - 17', fajr: '4:25', zuhr: '12:40', asr_: '4:45', magrib: '6:40', isha_: '8:05', sahar_mudivu: '4:07', udhayam: '5:49', astam: '6:35', uchcham: '12:12' },
+        { date: 'Jun 18 - 23', fajr: '4:30', zuhr: '12:40', asr_: '4:45', magrib: '6:41', isha_: '8:10', sahar_mudivu: '4:08', udhayam: '5:50', astam: '6:36', uchcham: '12:13' },
+        { date: 'Jun 24 - End', fajr: '4:30', zuhr: '12:40', asr_: '4:50', magrib: '6:42', isha_: '8:10', sahar_mudivu: '4:09', udhayam: '5:50', astam: '6:37', uchcham: '12:14' },
+    ],
+    'July': [
+        { date: 'Jul 1 - 5', fajr: '4:30', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:11', udhayam: '5:53', astam: '6:39', uchcham: '12:16' },
+        { date: 'Jul 6 - 11', fajr: '4:35', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:13', udhayam: '5:54', astam: '6:39', uchcham: '12:17' },
+        { date: 'Jul 12 - 17', fajr: '4:35', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:15', udhayam: '5:55', astam: '6:39', uchcham: '12:17' },
+        { date: 'Jul 18 - 23', fajr: '4:35', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:17', udhayam: '5:57', astam: '6:39', uchcham: '12:18' },
+        { date: 'Jul 24 - End', fajr: '4:40', zuhr: '12:40', asr_: '4:50', magrib: '6:44', isha_: '8:10', sahar_mudivu: '4:19', udhayam: '5:58', astam: '6:39', uchcham: '12:18' },
+    ],
+    'August': [
+        { date: 'Aug 1 - 5', fajr: '4:40', zuhr: '12:40', asr_: '4:50', magrib: '6:42', isha_: '8:05', sahar_mudivu: '4:22', udhayam: '6:00', astam: '6:37', uchcham: '12:18' },
+        { date: 'Aug 6 - 11', fajr: '4:45', zuhr: '12:40', asr_: '4:45', magrib: '6:40', isha_: '8:05', sahar_mudivu: '4:23', udhayam: '6:00', astam: '6:35', uchcham: '12:18' },
+        { date: 'Aug 12 - 17', fajr: '4:45', zuhr: '12:40', asr_: '4:45', magrib: '6:38', isha_: '8:00', sahar_mudivu: '4:25', udhayam: '6:01', astam: '6:33', uchcham: '12:17' },
+        { date: 'Aug 18 - 23', fajr: '4:45', zuhr: '12:40', asr_: '4:40', magrib: '6:36', isha_: '7:55', sahar_mudivu: '4:26', udhayam: '6:01', astam: '6:31', uchcham: '12:16' },
+        { date: 'Aug 24 - End', fajr: '4:45', zuhr: '12:40', asr_: '4:35', magrib: '6:32', isha_: '7:50', sahar_mudivu: '4:27', udhayam: '6:01', astam: '6:27', uchcham: '12:15' },
+    ],
+    'September': [
+        { date: 'Sep 1 - 5', fajr: '4:50', zuhr: '12:40', asr_: '4:35', magrib: '6:28', isha_: '7:45', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:23', uchcham: '12:12' },
+        { date: 'Sep 6 - 11', fajr: '4:50', zuhr: '12:40', asr_: '4:35', magrib: '6:25', isha_: '7:45', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:20', uchcham: '12:11' },
+        { date: 'Sep 12 - 17', fajr: '4:50', zuhr: '12:40', asr_: '4:30', magrib: '6:22', isha_: '7:40', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:17', uchcham: '12:09' },
+        { date: 'Sep 18 - 23', fajr: '4:50', zuhr: '12:40', asr_: '4:30', magrib: '6:17', isha_: '7:35', sahar_mudivu: '4:28', udhayam: '6:01', astam: '6:12', uchcham: '12:06' },
+        { date: 'Sep 24 - End', fajr: '4:50', zuhr: '12:40', asr_: '4:25', magrib: '6:13', isha_: '7:30', sahar_mudivu: '4:28', udhayam: '6:00', astam: '6:08', uchcham: '12:04' },
+    ],
+    'October': [
+        { date: 'Oct 1 - 5', fajr: '4:50', zuhr: '12:40', asr_: '4:25', magrib: '6:09', isha_: '7:25', sahar_mudivu: '4:28', udhayam: '6:00', astam: '6:04', uchcham: '12:02' },
+        { date: 'Oct 6 - 11', fajr: '4:50', zuhr: '12:40', asr_: '4:20', magrib: '6:06', isha_: '7:25', sahar_mudivu: '4:28', udhayam: '6:00', astam: '6:01', uchcham: '12:00' },
+        { date: 'Oct 12 - 17', fajr: '4:45', zuhr: '12:40', asr_: '4:20', magrib: '6:02', isha_: '7:20', sahar_mudivu: '4:27', udhayam: '6:00', astam: '5:57', uchcham: '11:59' },
+        { date: 'Oct 18 - 23', fajr: '4:45', zuhr: '12:40', asr_: '4:15', magrib: '6:00', isha_: '7:20', sahar_mudivu: '4:27', udhayam: '6:00', astam: '5:55', uchcham: '11:57' },
+        { date: 'Oct 24 - End', fajr: '4:50', zuhr: '12:40', asr_: '4:15', magrib: '5:58', isha_: '7:15', sahar_mudivu: '4:28', udhayam: '6:01', astam: '5:52', uchcham: '11:56' },
+    ],
+    'November': [
+        { date: 'Nov 1 - 5', fajr: '4:50', zuhr: '12:40', asr_: '4:15', magrib: '5:56', isha_: '7:15', sahar_mudivu: '4:30', udhayam: '6:03', astam: '5:49', uchcham: '11:56' },
+        { date: 'Nov 6 - 11', fajr: '4:50', zuhr: '12:40', asr_: '4:10', magrib: '5:56', isha_: '7:15', sahar_mudivu: '4:31', udhayam: '6:04', astam: '5:48', uchcham: '11:56' },
+        { date: 'Nov 12 - 17', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:33', udhayam: '6:06', astam: '5:47', uchcham: '11:56' },
+        { date: 'Nov 18 - 23', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:35', udhayam: '6:08', astam: '5:47', uchcham: '11:57' },
+        { date: 'Nov 24 - End', fajr: '4:55', zuhr: '12:40', asr_: '4:10', magrib: '5:55', isha_: '7:15', sahar_mudivu: '4:36', udhayam: '6:10', astam: '5:47', uchcham: '11:59' },
+    ],
+    'December': [
+        { date: 'Dec 1 - 5', fajr: '5:00', zuhr: '12:40', asr_: '4:15', magrib: '5:56', isha_: '7:20', sahar_mudivu: '4:39', udhayam: '6:14', astam: '5:48', uchcham: '12:01' },
+        { date: 'Dec 6 - 11', fajr: '5:00', zuhr: '12:40', asr_: '4:15', magrib: '5:58', isha_: '7:20', sahar_mudivu: '4:41', udhayam: '6:16', astam: '5:48', uchcham: '12:03' },
+        { date: 'Dec 12 - 17', fajr: '5:05', zuhr: '12:40', asr_: '4:15', magrib: '6:00', isha_: '7:25', sahar_mudivu: '4:44', udhayam: '6:19', astam: '5:52', uchcham: '12:06' },
+        { date: 'Dec 18 - 23', fajr: '5:05', zuhr: '12:40', asr_: '4:20', magrib: '6:02', isha_: '7:25', sahar_mudivu: '4:46', udhayam: '6:23', astam: '5:54', uchcham: '12:08' },
+        { date: 'Dec 24 - End', fajr: '5:10', zuhr: '12:40', asr_: '4:20', magrib: '6:05', isha_: '7:30', sahar_mudivu: '4:50', udhayam: '6:26', astam: '5:57', uchcham: '12:11' },
+    ],
 };
 
 // --- 3. DATA PROCESSING ---
@@ -1445,356 +1445,356 @@ const allMonthlyEvents = {};
 const fixedZuhrTime = '12:40';
 
 const prayerOffsets = {
-  fajr: 40,
-  zuhr: 20,
-  asr_: 20,
-  magrib: 3,
-  isha_: 20,
+    fajr: 40,
+    zuhr: 20,
+    asr_: 20,
+    magrib: 3,
+    isha_: 20,
 };
 
 const addMinutes = (timeStr, minutesToAdd) => {
-  if (!timeStr) return null;
-  const match = timeStr.match(/(\d+):(\d+)/);
-  if (!match) return timeStr;
-  let h = parseInt(match[1], 10);
-  let m = parseInt(match[2], 10);
+    if (!timeStr) return null;
+    const match = timeStr.match(/(\d+):(\d+)/);
+    if (!match) return timeStr;
+    let h = parseInt(match[1], 10);
+    let m = parseInt(match[2], 10);
 
-  const date = new Date();
-  date.setHours(h);
-  date.setMinutes(m + minutesToAdd);
+    const date = new Date();
+    date.setHours(h);
+    date.setMinutes(m + minutesToAdd);
 
-  let hh = date.getHours();
-  const mm = date.getMinutes().toString().padStart(2, '0');
+    let hh = date.getHours();
+    const mm = date.getMinutes().toString().padStart(2, '0');
 
-  if (hh > 12) hh = hh - 12;
-  return `${hh}:${mm}`;
+    if (hh > 12) hh = hh - 12;
+    return `${hh}:${mm}`;
 };
 
 Object.keys(allMonthlyEventsRaw).forEach(month => {
-  allMonthlyEvents[month] = allMonthlyEventsRaw[month].map(event => {
-    const fajrAzan = roundToNearestTenMinutes(event.fajr);
-    const asrAzan = roundToNearestTenMinutes(event.asr_);
-    const magribAzan = roundToNearestTenMinutes(event.magrib);
-    const ishaAzan = roundToNearestTenMinutes(event.isha_);
-    const zuhrAzan = roundToNearestTenMinutes(event.zuhr || fixedZuhrTime);
+    allMonthlyEvents[month] = allMonthlyEventsRaw[month].map(event => {
+        const fajrAzan = roundToNearestTenMinutes(event.fajr);
+        const asrAzan = roundToNearestTenMinutes(event.asr_);
+        const magribAzan = roundToNearestTenMinutes(event.magrib);
+        const ishaAzan = roundToNearestTenMinutes(event.isha_);
+        const zuhrAzan = roundToNearestTenMinutes(event.zuhr || fixedZuhrTime);
 
-    return {
-      ...event,
-      fajr: { azan: fajrAzan, namaz: addMinutes(fajrAzan, prayerOffsets.fajr) },
-      asr_: { azan: asrAzan, namaz: addMinutes(asrAzan, prayerOffsets.asr_) },
-      magrib: { azan: magribAzan, namaz: addMinutes(magribAzan, prayerOffsets.magrib) },
-      isha_: { azan: ishaAzan, namaz: addMinutes(ishaAzan, prayerOffsets.isha_) },
-      sahar_mudivu: roundToNearestTenMinutes(event.sahar_mudivu),
-      zuhr: { azan: zuhrAzan, namaz: addMinutes(zuhrAzan, prayerOffsets.zuhr) },
-    };
-  });
+        return {
+            ...event,
+            fajr: { azan: fajrAzan, namaz: addMinutes(fajrAzan, prayerOffsets.fajr) },
+            asr_: { azan: asrAzan, namaz: addMinutes(asrAzan, prayerOffsets.asr_) },
+            magrib: { azan: magribAzan, namaz: addMinutes(magribAzan, prayerOffsets.magrib) },
+            isha_: { azan: ishaAzan, namaz: addMinutes(ishaAzan, prayerOffsets.isha_) },
+            sahar_mudivu: event.sahar_mudivu,
+            zuhr: { azan: zuhrAzan, namaz: addMinutes(zuhrAzan, prayerOffsets.zuhr) },
+        };
+    });
 });
 
 // --- 4. REAL-TIME LOGIC ---
 
 const getCurrentMinutes = () => {
-  const now = new Date();
-  return now.getHours() * 60 + now.getMinutes();
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
 };
 
 const getClosestEventDate = (events, currentDay) => {
-  const eventDays = events.map(e => {
-    const parts = e.date.split(' ');
-    const candidate = parts.find(p => !isNaN(parseInt(p.replace(/\D/g, ''), 10))) || '1';
-    const numeric = parseInt(candidate.replace(/\D/g, ''), 10);
-    return isNaN(numeric) ? 1 : numeric;
-  });
+    const eventDays = events.map(e => {
+        const parts = e.date.split(' ');
+        const candidate = parts.find(p => !isNaN(parseInt(p.replace(/\D/g, ''), 10))) || '1';
+        const numeric = parseInt(candidate.replace(/\D/g, ''), 10);
+        return isNaN(numeric) ? 1 : numeric;
+    });
 
-  // Logic to find the event range that includes the current day
-  for (const event of events) {
-    if (event.date.includes('-')) {
-      const [startStr, endStr] = event.date.split('-').map(s => s.trim());
-      const startDay = parseInt(startStr.match(/\d+/) ? startStr.match(/\d+/)[0] : '1');
-      const endDay = parseInt(endStr.match(/\d+/) ? endStr.match(/\d+/)[0] : '31');
-      
-      if (currentDay >= startDay && currentDay <= endDay) {
-        return event;
-      }
-    } else {
-      // Handle single-day events if they existed, but for now we prioritize range
-      const numeric = parseInt(event.date.match(/\d+/) ? event.date.match(/\d+/)[0] : '1');
-      if (currentDay === numeric) {
-        return event;
-      }
-    }
-  }
-  
-  // Fallback: return the event whose starting date is closest to the current day without exceeding it.
-  const applicableEvents = events.filter(e => {
-    const startStr = e.date.split('-')[0].trim();
-    const startDay = parseInt(startStr.match(/\d+/) ? startStr.match(/\d+/)[0] : '1');
-    return currentDay >= startDay;
-  });
-  return applicableEvents.pop() || events[0];
+    // Logic to find the event range that includes the current day
+    for (const event of events) {
+        if (event.date.includes('-')) {
+            const [startStr, endStr] = event.date.split('-').map(s => s.trim());
+            const startDay = parseInt(startStr.match(/\d+/) ? startStr.match(/\d+/)[0] : '1');
+            const endDay = parseInt(endStr.match(/\d+/) ? endStr.match(/\d+/)[0] : '31');
+
+            if (currentDay >= startDay && currentDay <= endDay) {
+                return event;
+            }
+        } else {
+            // Handle single-day events if they existed, but for now we prioritize range
+            const numeric = parseInt(event.date.match(/\d+/) ? event.date.match(/\d+/)[0] : '1');
+            if (currentDay === numeric) {
+                return event;
+            }
+        }
+    }
+
+    // Fallback: return the event whose starting date is closest to the current day without exceeding it.
+    const applicableEvents = events.filter(e => {
+        const startStr = e.date.split('-')[0].trim();
+        const startDay = parseInt(startStr.match(/\d+/) ? startStr.match(/\d+/)[0] : '1');
+        return currentDay >= startDay;
+    });
+    return applicableEvents.pop() || events[0];
 };
 
 const getActivePrayer = (event) => {
-  if (!event) return null;
+    if (!event) return null;
 
-  const currentMinutes = getCurrentMinutes();
+    const currentMinutes = getCurrentMinutes();
 
-  const prayerTimes = [
-    { name: 'Sahar End', time: timeToMinutes(event.sahar_mudivu, 'Sahar End') },
-    { name: 'Fajr', time: timeToMinutes(event.fajr, 'Fajr') },
-    { name: 'Zuhr', time: timeToMinutes(event.zuhr, 'Zuhr') },
-    { name: 'Asr', time: timeToMinutes(event.asr_, 'Asr') },
-    { name: 'Magrib', time: timeToMinutes(event.magrib, 'Magrib') },
-    { name: 'Isha', time: timeToMinutes(event.isha_, 'Isha') },
-  ];
+    const prayerTimes = [
+        { name: 'Sahar End', time: timeToMinutes(event.sahar_mudivu, 'Sahar End') },
+        { name: 'Fajr', time: timeToMinutes(event.fajr, 'Fajr') },
+        { name: 'Zuhr', time: timeToMinutes(event.zuhr, 'Zuhr') },
+        { name: 'Asr', time: timeToMinutes(event.asr_, 'Asr') },
+        { name: 'Magrib', time: timeToMinutes(event.magrib, 'Magrib') },
+        { name: 'Isha', time: timeToMinutes(event.isha_, 'Isha') },
+    ];
 
-  // Use the Namaz/Iqama time for logic comparison
-  const activePrayerTimeData = [
-    { name: 'Sahar End', time: timeToMinutes(event.sahar_mudivu, 'Sahar End') },
-    { name: 'Fajr', time: timeToMinutes(event.fajr.namaz, 'Fajr') },
-    { name: 'Zuhr', time: timeToMinutes(event.zuhr.namaz, 'Zuhr') },
-    { name: 'Asr', time: timeToMinutes(event.asr_.namaz, 'Asr') },
-    { name: 'Magrib', time: timeToMinutes(event.magrib.namaz, 'Magrib') },
-    { name: 'Isha', time: timeToMinutes(event.isha_.namaz, 'Isha') },
-  ].filter(p => p.time !== -1);
-  
-  const sortedTimes = activePrayerTimeData.sort((a, b) => a.time - b.time);
+    // Use the Namaz/Iqama time for logic comparison
+    const activePrayerTimeData = [
+        { name: 'Sahar End', time: timeToMinutes(event.sahar_mudivu, 'Sahar End') },
+        { name: 'Fajr', time: timeToMinutes(event.fajr.namaz, 'Fajr') },
+        { name: 'Zuhr', time: timeToMinutes(event.zuhr.namaz, 'Zuhr') },
+        { name: 'Asr', time: timeToMinutes(event.asr_.namaz, 'Asr') },
+        { name: 'Magrib', time: timeToMinutes(event.magrib.namaz, 'Magrib') },
+        { name: 'Isha', time: timeToMinutes(event.isha_.namaz, 'Isha') },
+    ].filter(p => p.time !== -1);
 
-  let nextPrayerName = 'Fajr'; // Default to Fajr
-  let foundNext = false;
-  
-  // Find the next prayer time (Namaz/Iqama time)
-  for (const p of sortedTimes) {
-    if (currentMinutes < p.time) {
-      nextPrayerName = p.name;
-      foundNext = true;
-      break;
-    }
-  }
+    const sortedTimes = activePrayerTimeData.sort((a, b) => a.time - b.time);
 
-  // If no prayer is found (i.e., time is past Isha), the next prayer is Fajr
-  if (!foundNext) {
-    nextPrayerName = 'Fajr';
-  }
+    let nextPrayerName = 'Fajr'; // Default to Fajr
+    let foundNext = false;
 
-  // Determine the *current* prayer (the one that has just passed).
-  // This is complex, so let's use the standard "after Magrib, before Fajr is Isha" logic.
-  
-  // Let's use the Azan times to determine the current *period*.
-  const periodTimes = [
-    { name: 'Fajr', time: timeToMinutes(event.fajr.azan, 'Fajr') },
-    { name: 'Zuhr', time: timeToMinutes(event.zuhr.azan, 'Zuhr') },
-    { name: 'Asr', time: timeToMinutes(event.asr_.azan, 'Asr') },
-    { name: 'Magrib', time: timeToMinutes(event.magrib.azan, 'Magrib') },
-    { name: 'Isha', time: timeToMinutes(event.isha_.azan, 'Isha') },
-  ].filter(p => p.time !== -1).sort((a, b) => a.time - b.time);
+    // Find the next prayer time (Namaz/Iqama time)
+    for (const p of sortedTimes) {
+        if (currentMinutes < p.time) {
+            nextPrayerName = p.name;
+            foundNext = true;
+            break;
+        }
+    }
 
-  let currentPeriodName = 'Isha'; // Default, handles midnight
+    // If no prayer is found (i.e., time is past Isha), the next prayer is Fajr
+    if (!foundNext) {
+        nextPrayerName = 'Fajr';
+    }
 
-  for (let i = 0; i < periodTimes.length; i++) {
-    if (currentMinutes >= periodTimes[i].time) {
-      currentPeriodName = periodTimes[i].name;
-    }
-  }
-  
-  // Special case for Sahar End/Fajr (pre-dawn period is Isha/Layl)
-  const saharEndTime = timeToMinutes(event.sahar_mudivu, 'Sahar End');
-  const fajrAzanTime = timeToMinutes(event.fajr.azan, 'Fajr');
+    // Determine the *current* prayer (the one that has just passed).
+    // This is complex, so let's use the standard "after Magrib, before Fajr is Isha" logic.
 
-  if (currentMinutes > saharEndTime && currentMinutes < fajrAzanTime) {
-    currentPeriodName = 'Sahar End'; // The period between Sahar end and Fajr Azan
-  }
-  
-  return currentPeriodName;
+    // Let's use the Azan times to determine the current *period*.
+    const periodTimes = [
+        { name: 'Fajr', time: timeToMinutes(event.fajr.azan, 'Fajr') },
+        { name: 'Zuhr', time: timeToMinutes(event.zuhr.azan, 'Zuhr') },
+        { name: 'Asr', time: timeToMinutes(event.asr_.azan, 'Asr') },
+        { name: 'Magrib', time: timeToMinutes(event.magrib.azan, 'Magrib') },
+        { name: 'Isha', time: timeToMinutes(event.isha_.azan, 'Isha') },
+    ].filter(p => p.time !== -1).sort((a, b) => a.time - b.time);
+
+    let currentPeriodName = 'Isha'; // Default, handles midnight
+
+    for (let i = 0; i < periodTimes.length; i++) {
+        if (currentMinutes >= periodTimes[i].time) {
+            currentPeriodName = periodTimes[i].name;
+        }
+    }
+
+    // Special case for Sahar End/Fajr (pre-dawn period is Isha/Layl)
+    const saharEndTime = timeToMinutes(event.sahar_mudivu, 'Sahar End');
+    const fajrAzanTime = timeToMinutes(event.fajr.azan, 'Fajr');
+
+    if (currentMinutes > saharEndTime && currentMinutes < fajrAzanTime) {
+        currentPeriodName = 'Sahar End'; // The period between Sahar end and Fajr Azan
+    }
+
+    return currentPeriodName;
 };
 
 // --- 5. REFINED TIMEBADGE COMPONENT ---
 const TimeBadge = ({ icon: Icon, label, time, isCurrentPrayer = false }) => {
-  const hasTwoTimes = typeof time === 'object' && time !== null && 'azan' in time && 'namaz' in time;
+    const hasTwoTimes = typeof time === 'object' && time !== null && 'azan' in time && 'namaz' in time;
 
-  return (
-    <div
-      className={`flex flex-col p-3 rounded-xl transition-all duration-200 shadow-lg ${
-        // Highlight the active prayer in the card
-        isCurrentPrayer
-          ? 'bg-blue-600/20 border border-blue-400/60'
-          : 'bg-slate-700/40 border border-slate-600/40 hover:bg-slate-700/60'
-      }`}
-    >
-      {/* Top line with Icon and Label */}
-      <div className={`mb-2 flex items-center justify-between`}>
-        <span className={`text-xs font-semibold uppercase tracking-wider ${isCurrentPrayer ? 'text-blue-300' : 'text-gray-400'}`}>
-          {label}
-        </span>
-        <Icon size={18} className={`${isCurrentPrayer ? 'text-blue-300' : 'text-gray-300'}`} />
-      </div>
+    return (
+        <div
+            className={`flex flex-col p-3 rounded-xl transition-all duration-200 shadow-lg ${
+                // Highlight the active prayer in the card
+                isCurrentPrayer
+                    ? 'bg-blue-600/20 border border-blue-400/60'
+                    : 'bg-slate-700/40 border border-slate-600/40 hover:bg-slate-700/60'
+                }`}
+        >
+            {/* Top line with Icon and Label */}
+            <div className={`mb-2 flex items-center justify-between`}>
+                <span className={`text-xs font-semibold uppercase tracking-wider ${isCurrentPrayer ? 'text-blue-300' : 'text-gray-400'}`}>
+                    {label}
+                </span>
+                <Icon size={18} className={`${isCurrentPrayer ? 'text-blue-300' : 'text-gray-300'}`} />
+            </div>
 
-      {hasTwoTimes ? (
-        <div className="w-full flex flex-col items-start">
-          {/* Primary (Azan) Time: Larger, Bolder, Main Focus */}
-          <span className={`text-xl font-extrabold font-mono ${isCurrentPrayer ? 'text-blue-50' : 'text-gray-100'} flex items-center`}>
-            🕌 <span className="ml-2">{time.azan}</span>
-            {isCurrentPrayer && <BellRing size={14} className="ml-2 text-blue-400" />}
-          </span>
-          {/* Secondary (Namaz/Iqama) Time: Smaller, Muted, Detail */}
-          <span className={`text-sm font-semibold font-mono ${isCurrentPrayer ? 'text-blue-200' : 'text-gray-400'} flex items-center mt-1`}>
-            ⏰ <span className="ml-2">{time.namaz}</span>
-          </span>
-        </div>
-      ) : (
-        <div className="w-full flex flex-col items-start">
-          <span className={`text-xl font-extrabold font-mono ${isCurrentPrayer ? 'text-blue-100' : 'text-gray-200'} flex items-center`}>
-            <Clock size={16} className="text-purple-400 mr-2" />
-            {time}
-          </span>
-        </div>
-      )}
-    </div>
-  );
+            {hasTwoTimes ? (
+                <div className="w-full flex flex-col items-start">
+                    {/* Primary (Azan) Time: Larger, Bolder, Main Focus */}
+                    <span className={`text-xl font-extrabold font-mono ${isCurrentPrayer ? 'text-blue-50' : 'text-gray-100'} flex items-center`}>
+                        🕌 <span className="ml-2">{time.azan}</span>
+                        {isCurrentPrayer && <BellRing size={14} className="ml-2 text-blue-400" />}
+                    </span>
+                    {/* Secondary (Namaz/Iqama) Time: Smaller, Muted, Detail */}
+                    <span className={`text-sm font-semibold font-mono ${isCurrentPrayer ? 'text-blue-200' : 'text-gray-400'} flex items-center mt-1`}>
+                        ⏰ <span className="ml-2">{time.namaz}</span>
+                    </span>
+                </div>
+            ) : (
+                <div className="w-full flex flex-col items-start">
+                    <span className={`text-xl font-extrabold font-mono ${isCurrentPrayer ? 'text-blue-100' : 'text-gray-200'} flex items-center`}>
+                        <Clock size={16} className="text-purple-400 mr-2" />
+                        {time}
+                    </span>
+                </div>
+            )}
+        </div>
+    );
 };
 
 // --- 6. MAIN COMPONENT ---
 
 export default function CalendarSection() {
-  const monthNames = Object.keys(allMonthlyEvents);
+    const monthNames = Object.keys(allMonthlyEvents);
 
-  // Determine current date for 'Today' logic
-  const now = new Date();
-  const currentMonthName = now.toLocaleDateString('en-US', { month: 'long' });
-  const currentDay = now.getDate();
-const currentMonth = now.getMonth() + 1;
-const currentYear = now.getFullYear();
+    // Determine current date for 'Today' logic
+    const now = new Date();
+    const currentMonthName = now.toLocaleDateString('en-US', { month: 'long' });
+    const currentDay = now.getDate();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
 
-  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
-  const events = useMemo(() => allMonthlyEvents[selectedMonth] || [], [selectedMonth]);
+    const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
+    const events = useMemo(() => allMonthlyEvents[selectedMonth] || [], [selectedMonth]);
 
-  const todayEventData = selectedMonth === currentMonthName
-    ? getClosestEventDate(events, currentDay)
-    : events[0] || null; // Fallback for demonstration if current month has no data
+    const todayEventData = selectedMonth === currentMonthName
+        ? getClosestEventDate(events, currentDay)
+        : events[0] || null; // Fallback for demonstration if current month has no data
 
-  // We get the active prayer name (e.g., 'Fajr', 'Zuhr')
-  const activePrayer = todayEventData ? getActivePrayer(todayEventData) : null;
-  const isTodayEvent = (event) => event === todayEventData;
+    // We get the active prayer name (e.g., 'Fajr', 'Zuhr')
+    const activePrayer = todayEventData ? getActivePrayer(todayEventData) : null;
+    const isTodayEvent = (event) => event === todayEventData;
 
-  return (
-    <section id="prayer-schedule" className="relative py-16 px-4 sm:px-6 lg:px-8 min-h-screen bg-gradient-to-br from-gray-900 via-slate-950 to-gray-900 overflow-hidden">
-      
-      {/* Animated background elements for depth */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-      </div>
+    return (
+        <section id="prayer-schedule" className="relative py-16 px-4 sm:px-6 lg:px-8 min-h-screen bg-gradient-to-br from-gray-900 via-slate-950 to-gray-900 overflow-hidden">
 
-      <div className="relative max-w-7xl mx-auto">
-        
-        {/* Main Header with Gradients */}
-        <div className="text-center mb-14">
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-2 tracking-tight">
-            Prayer Schedule
-          </h2>
-          <p className="text-xl font-semibold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            {selectedMonth} Times
-          </p>
-        </div>
+            {/* Animated background elements for depth */}
+            <div className="absolute inset-0 opacity-40">
+                <div className="absolute top-20 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            </div>
 
-        {/* Month Selector Dropdown */}
-        <div className="flex justify-center mb-12">
-          <div className="relative inline-block w-full sm:w-80">
-            <select
-              id="month-selector"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              // Classy Glassmorphism Select Styling
-              className="appearance-none block w-full bg-slate-700/50 backdrop-blur-md border border-slate-600/50 rounded-xl py-3 px-4 pr-10 text-base font-semibold text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-xl"
-            >
-              {monthNames.map((month) => (
-                <option key={month} value={month} className="bg-slate-900">
-                  {month}
-                  {month === currentMonthName && ` (${currentDay}.${currentMonth}.${currentYear})`}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-blue-400">
-              <ChevronDown size={20} />
-            </div>
-          </div>
-        </div>
+            <div className="relative max-w-7xl mx-auto">
 
-        {/* Schedule Grid (Responsive) */}
-        {events.length === 0 ? (
-          <p className="text-center text-xl text-red-400 font-semibold">
-            No data available for {selectedMonth}.
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {events.map((event) => {
-              const isCurrentDayCard = isTodayEvent(event);
+                {/* Main Header with Gradients */}
+                <div className="text-center mb-14">
+                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-2 tracking-tight">
+                        Prayer Schedule
+                    </h2>
+                    <p className="text-xl font-semibold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        {selectedMonth} Times
+                    </p>
+                </div>
 
-              return (
-                <div key={event.date} className="group relative">
-                  
-                  {/* Main Card Container (Glassmorphism Effect) */}
-                  <div className={`relative backdrop-blur-xl rounded-2xl p-6 transition-all duration-300 h-full ${
-                    isCurrentDayCard
-                      ? 'bg-blue-900/30 border-2 border-blue-500/60 shadow-2xl shadow-blue-900/50' // Highlighted today card
-                      : 'bg-slate-800/50 border border-slate-700/50 hover:border-blue-700/50 hover:bg-slate-700/60 shadow-lg'
-                  }`}>
+                {/* Month Selector Dropdown */}
+                <div className="flex justify-center mb-12">
+                    <div className="relative inline-block w-full sm:w-80">
+                        <select
+                            id="month-selector"
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            // Classy Glassmorphism Select Styling
+                            className="appearance-none block w-full bg-slate-700/50 backdrop-blur-md border border-slate-600/50 rounded-xl py-3 px-4 pr-10 text-base font-semibold text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-xl"
+                        >
+                            {monthNames.map((month) => (
+                                <option key={month} value={month} className="bg-slate-900">
+                                    {month}
+                                    {month === currentMonthName && ` (${currentDay}.${currentMonth}.${currentYear})`}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-blue-400">
+                            <ChevronDown size={20} />
+                        </div>
+                    </div>
+                </div>
 
-                    {/* Current Day Chip */}
-                    {isCurrentDayCard && (
-                      <div className="absolute -top-3 right-5 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg flex items-center transform -translate-y-1/2">
-                        <Zap size={14} className="mr-1" /> TODAY
-                      </div>
-                    )}
+                {/* Schedule Grid (Responsive) */}
+                {events.length === 0 ? (
+                    <p className="text-center text-xl text-red-400 font-semibold">
+                        No data available for {selectedMonth}.
+                    </p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {events.map((event) => {
+                            const isCurrentDayCard = isTodayEvent(event);
 
-                    {/* Header */}
-                    <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-700/50">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow ${
-                        isCurrentDayCard ? 'bg-blue-500' : 'bg-slate-700'
-                      }`}>
-                        <Calendar size={18} className="text-white" />
-                      </div>
-                      <h3 className={`text-xl font-bold ${isCurrentDayCard ? 'text-blue-100' : 'text-gray-100'}`}>
-                        {event.date}
-                      </h3>
-                    </div>
+                            return (
+                                <div key={event.date} className="group relative">
 
+                                    {/* Main Card Container (Glassmorphism Effect) */}
+                                    <div className={`relative backdrop-blur-xl rounded-2xl p-6 transition-all duration-300 h-full ${isCurrentDayCard
+                                        ? 'bg-blue-900/30 border-2 border-blue-500/60 shadow-2xl shadow-blue-900/50' // Highlighted today card
+                                        : 'bg-slate-800/50 border border-slate-700/50 hover:border-blue-700/50 hover:bg-slate-700/60 shadow-lg'
+                                        }`}>
 
-                    <h4 className="text-sm font-bold text-blue-300 mb-4 uppercase tracking-widest flex items-center">
-                      <span className="w-1 h-3 bg-blue-500 rounded mr-2"></span>
-                      Primary Salah
-                    </h4>
-                    {/* Responsive Grid for Prayer Badges (2 columns) */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                      <TimeBadge icon={Sunrise} label="Fajr" time={event.fajr} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Fajr'} />
-                      <TimeBadge icon={Sun} label="Zuhr" time={event.zuhr} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Zuhr'} />
-                      <TimeBadge icon={Sun} label="Asr" time={event.asr_} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Asr'} />
-                      <TimeBadge icon={Sunset} label="Magrib" time={event.magrib} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Magrib'} />
-                      <TimeBadge icon={Moon} label="Isha" time={event.isha_} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Isha'} />
-                    </div>
+                                        {/* Current Day Chip */}
+                                        {isCurrentDayCard && (
+                                            <div className="absolute -top-0 right-5 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-lg flex items-center transform -translate-y-1/2">
+                                                <Zap size={14} className="mr-1" />
+                                                TODAY ({currentDay}.{currentMonth}.{currentYear})
+
+                                            </div>
+                                        )}
+
+                                        {/* Header */}
+                                        <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-700/50">
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow ${isCurrentDayCard ? 'bg-blue-500' : 'bg-slate-700'
+                                                }`}>
+                                                <Calendar size={18} className="text-white" />
+                                            </div>
+                                            <h3 className={`text-xl font-bold ${isCurrentDayCard ? 'text-blue-100' : 'text-gray-100'}`}>
+                                                {event.date}
+                                            </h3>
+                                        </div>
 
 
-                    <h4 className="text-sm font-bold text-purple-300 mb-4 uppercase tracking-widest flex items-center">
-                      <span className="w-1 h-3 bg-purple-500 rounded mr-2"></span>
-                      Key Milestones
-                    </h4>
-                    <div className="grid grid-cols-2 gap-3">
-                      {/* Note: These do not have Namaz times, so they use the simpler TimeBadge display */}
-                      <TimeBadge icon={Clock} label="Sahur End" time={event.sahar_mudivu} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Sahar End'} />
-                      <TimeBadge icon={Sunrise} label="Sunrise" time={event.udhayam} />
-                      <TimeBadge icon={Sunset} label="Sunset" time={event.astam} />
-                      <TimeBadge icon={Sun} label="Midday" time={event.uchcham} />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-      
-      {/* Decorative bottom line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+                                        <h4 className="text-sm font-bold text-blue-300 mb-4 uppercase tracking-widest flex items-center">
+                                            <span className="w-1 h-3 bg-blue-500 rounded mr-2"></span>
+                                            Primary Salah
+                                        </h4>
+                                        {/* Responsive Grid for Prayer Badges (2 columns) */}
+                                        <div className="grid grid-cols-2 gap-3 mb-6">
+                                            <TimeBadge icon={Sunrise} label="Fajr" time={event.fajr} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Fajr'} />
+                                            <TimeBadge icon={Sun} label="Zuhr" time={event.zuhr} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Zuhr'} />
+                                            <TimeBadge icon={Sun} label="Asr" time={event.asr_} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Asr'} />
+                                            <TimeBadge icon={Sunset} label="Magrib" time={event.magrib} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Magrib'} />
+                                            <TimeBadge icon={Moon} label="Isha" time={event.isha_} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Isha'} />
+                                        </div>
 
-    </section>
-  );
+
+                                        <h4 className="text-sm font-bold text-purple-300 mb-4 uppercase tracking-widest flex items-center">
+                                            <span className="w-1 h-3 bg-purple-500 rounded mr-2"></span>
+                                            Key Milestones
+                                        </h4>
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {/* Note: These do not have Namaz times, so they use the simpler TimeBadge display */}
+                                            <TimeBadge icon={Clock} label="Sahur End" time={event.sahar_mudivu} isCurrentPrayer={isCurrentDayCard && activePrayer === 'Sahar End'} />
+                                            <TimeBadge icon={Sunrise} label="Sunrise" time={event.udhayam} />
+                                            <TimeBadge icon={Sunset} label="Sunset" time={event.astam} />
+                                            <TimeBadge icon={Sun} label="Midday" time={event.uchcham} />
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            {/* Decorative bottom line */}
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent"></div>
+
+        </section>
+    );
 }
