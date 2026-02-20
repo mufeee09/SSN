@@ -513,11 +513,11 @@ export default function Footer() {
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
                 </div>
 
-                <div className="flex items-start justify-center gap-6 px-2">
-                  <p className="text-base sm:text-lg italic text-center text-gray-200 leading-relaxed transition-colors">
-                    <span className="text-blue-300 font-semibold">"</span>
+                <div className="flex justify-center px-4 sm:px-8">
+                  <p className="max-w-2xl text-base sm:text-lg italic text-gray-200 leading-7 sm:leading-8 text-center break-words">
+                    <span className="text-blue-300 font-semibold">“</span>
                     {coreHadith.english}
-                    <span className="text-purple-300 font-semibold">"</span>
+                    <span className="text-purple-300 font-semibold">”</span>
                   </p>
                 </div>
               </div>
@@ -527,7 +527,7 @@ export default function Footer() {
 
         <nav className="mb-16 w-full">
           <div className="flex flex-wrap justify-center gap-3 sm:gap-6 text-sm font-bold px-4 py-8 border-t border-b border-blue-500/20 backdrop-blur-xl relative">
-           
+
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-lg"></div>
 
             <div className="relative flex flex-wrap justify-center gap-2 sm:gap-4 w-full">
@@ -566,7 +566,7 @@ export default function Footer() {
               </button>
             </div>
           </div>
-        </nav> 
+        </nav>
 
 
         <div className="text-center space-y-3 relative">
@@ -579,7 +579,7 @@ export default function Footer() {
           </p>
         </div>
       </div>
-       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-600/10 via-purple-600/5 to-transparent pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-600/10 via-purple-600/5 to-transparent pointer-events-none"></div>
     </footer>
   );
 }
